@@ -12,6 +12,7 @@ WORKDIR /work
 RUN python -m pip install -U pip
 # Install Jupyter + the repo's declared deps
 COPY pyproject.toml README.md /work/
+COPY src/ /work/src/
 RUN python -m pip install -e ".[dev]"
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
