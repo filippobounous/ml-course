@@ -14,7 +14,7 @@ class Paths:
     reports: Path
 
     @staticmethod
-    def from_repo_root(repo_root: Path) -> "Paths":
+    def from_repo_root(repo_root: Path) -> Paths:
         return Paths(
             repo_root=repo_root,
             data_raw=repo_root / "data" / "raw",
