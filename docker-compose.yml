@@ -1,0 +1,12 @@
+services:
+  jupyter:
+    build:
+      context: .
+      dockerfile: docker/jupyter/Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./:/work
+    environment:
+      - JUPYTER_TOKEN=mlcourse
+    command: ["/work/docker/jupyter/start.sh"]

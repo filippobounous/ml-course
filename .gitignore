@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.Python
+
+# Environments
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data / artefacts
+data/
+!data/**/.gitkeep
+models/
+!models/.gitkeep
+reports/
+!reports/**/.gitkeep
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+
+# Ruff / pytest
+.ruff_cache/
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
