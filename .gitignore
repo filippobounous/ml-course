@@ -15,10 +15,15 @@ ENV/
 
 # Data / artefacts
 data/
+!data/
+!data/**/
 !data/**/.gitkeep
 models/
+!models/
 !models/.gitkeep
 reports/
+!reports/
+!reports/**/
 !reports/**/.gitkeep
 
 # Logs
