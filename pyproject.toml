@@ -107,7 +107,11 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
-ignore = ["E501"]  # handled by formatter expectations
+# RUF001/002/003: allow scientific notation Unicode (σ, μ, β, ×, ², α) in
+# docstrings/comments/strings — this is an ML/physics course; Greek letters
+# and maths symbols show up on purpose.
+# E501: long lines are handled by the formatter; don't lint.
+ignore = ["E501", "RUF001", "RUF002", "RUF003"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -127,3 +131,10 @@ disallow_untyped_defs = false
 no_implicit_optional = true
 strict_equality = true
 exclude = ["notebooks/", "modules/"]
+
+# Optional deep-learning deps are not required by the base install; mypy
+# should not fail when they are absent from the environment. Add further
+# entries as downstream weeks introduce more optional imports.
+[[tool.mypy.overrides]]
+module = ["torch.*", "wandb.*"]
+ignore_missing_imports = true
