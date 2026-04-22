@@ -1,92 +1,146 @@
-# ML Course Repo
+# ML/AI Course — for Quantitative Minds
 
-This repo is a clean starting point for the course: reproducible environment, linting/testing, and a Jupyter option
-(local or via Docker).
+A 12-week, ~20 hr/week intensive course that takes a quantitatively-literate learner
+(theoretical physics, maths, or equivalent) from **tutorial-level ML** to **research-grade
+fluency** in modern machine learning, deep learning, LLMs, diffusion, RL, and their
+applications to physics, quantitative finance, NLP, and computer vision.
 
-## Option A — Local on macOS (recommended)
+The course is designed to run on **CPU / Apple Silicon (MPS)** — every experiment fits
+in under an hour on an M-series Mac. No CUDA GPU required.
 
-### 0) Ensure you have a recent Python
-- If you use Homebrew:
-  ```bash
-  brew install python@3.12
-  ```
-  Then use `python3` below.
+Target balance: **30% theory** (derivations, proofs) / **40% hands-on code** (NumPy,
+PyTorch, MLX, HuggingFace) / **30% applied projects** (physics, quant, NLP, vision).
 
-### 1) Create the venv
+Learners ship a **portfolio of artifacts** — from a micrograd-style autograd engine to a
+DPO-tuned TinyLlama with a Gradio demo — that is recruiter-ready by week 12.
+
+---
+
+## Start here
+
+- **Read the syllabus:** [`SYLLABUS.md`](SYLLABUS.md) — week-by-week plan, readings, problem sets, artifacts.
+- **Browse the portfolio:** [`PORTFOLIO.md`](PORTFOLIO.md) — what you will ship and how to present it.
+- **Install the environment:** see **Setup** below.
+
+## Course map
+
+| Week | Theme | Headline artifact |
+|---|---|---|
+| 1 | Math foundations (linalg, probability, info theory, optimization, SDE primer) | Lecture notes + proofs problem set |
+| 2 | Statistical learning: ERM, MLE/MAP, bias–variance, PAC, MDP primer | NumPy linear-models mini-library |
+| 3 | Classical supervised: logistic, SVM, kernels, trees, gradient boosting | Tabular benchmark + XGBoost report |
+| 4 | Classical unsupervised: PCA/SVD, k-means, GMM/EM, density estimation | **PCA stat-arb notebook** (quant finance) |
+| 5 | Neural nets from scratch: autograd, backprop, SGD/Adam, init/norm | **Micrograd-style autograd engine** |
+| 6 | PyTorch deep-dive + reproducibility stack (Hydra, W&B, seeds, MPS) | **Reusable `mlcourse.Trainer` harness** |
+| 7 | CNNs & vision: ResNet, BN, transfer learning, Grad-CAM | **CIFAR-10 classifier + failure analysis** |
+| 8 | Transformers from scratch: attention, multi-head, BPE — **capstone kickoff** | **Tiny GPT on TinyStories** |
+| 9 | HF ecosystem, scaling laws, SFT, DPO with LoRA + MLX | **DPO-tuned TinyLlama + Gradio Space** |
+| 10 | Diffusion & multimodal: score matching, DDPM, DDIM, CLIP | **DDPM vs DDIM ablation** |
+| 11 | RL + agents: Bellman, policy gradient, PPO, tool-use agents | **PPO on custom env + from-scratch agent** |
+| 12 | Applied tracks (physics / quant) + **capstone delivery** | **PINN or stat-arb capstone** + paper reproduction |
+
+See [`SYLLABUS.md`](SYLLABUS.md) for the detailed week-by-week breakdown and reading list.
+
+## Weekly rhythm
+
+Each week follows the same shape:
+
+1. **Readings + lecture notes** (in `modules/NN_*/README.md` and `readings.md`)
+2. **Problem set**: 2 theory (proofs/derivations) + 2 implementation + 1–2 applied.
+   Graded where possible via `pytest` (see `tests/week_NN/`).
+3. **Portfolio artifact** (in `portfolio/NN_*/`) — the shareable piece.
+
+## Setup
+
+### Option A — Local on macOS / Linux (recommended)
+
 ```bash
+# 0) Python 3.11+
+python3 --version
+
+# 1) Create the venv and install dev tools
 python3 -m venv .venv
-```
-
-### 2) Activate it
-```bash
 source .venv/bin/activate
-```
-
-### 3) Upgrade pip + install the project (editable) with dev tools
-```bash
 python -m pip install -U pip
 python -m pip install -e ".[dev]"
-```
 
-### 4) Register the kernel for Jupyter
-```bash
+# 2) Register the Jupyter kernel
 python -m ipykernel install --user --name mlcourse --display-name "mlcourse (.venv)"
-```
 
-### 5) Run JupyterLab
-```bash
+# 3) Launch JupyterLab
 jupyter lab
 ```
 
-## Option B — Jupyter as a Docker service
+Or use the macOS bootstrap helper (runs an MPS sanity check and optional HF/MLX setup):
 
-Prereqs: Docker Desktop + Docker Compose.
+```bash
+bash scripts/bootstrap_macos.sh
+```
+
+### Option B — Docker Jupyter
 
 ```bash
 docker compose up --build jupyter
+# http://localhost:8888  (token set in docker-compose.yml)
 ```
 
-Then open:
-- http://localhost:8888 (token is set in `docker-compose.yml`)
+### Installing the per-week dependency groups
 
-Stop:
+Each week has its own optional-dependency group. Install them as you progress, so you
+are not fighting platform-specific wheels on week 1.
+
 ```bash
-docker compose down
+make week-5       # autograd  -> installs 'dl' group (torch, torchvision, lightning)
+make week-6       # trainer   -> installs 'dl,ops'
+make week-7       # CNNs      -> installs 'dl,ops'
+make week-8       # tiny GPT  -> installs 'dl,ops'
+make week-9       # LLMs/DPO  -> installs 'dl,llm,ops'
+make week-10      # diffusion -> installs 'dl,diffusion,ops'
+make week-11      # RL        -> installs 'dl,rl,ops'
+make week-12      # capstone  -> installs 'dl,sciml,ops'
 ```
 
-## VS Code (macOS)
+Or install everything at once:
 
-- Install recommended extensions (VS Code will prompt; see `.vscode/extensions.json`)
-- `Cmd+Shift+P` → **Python: Select Interpreter** → choose `.venv/bin/python`
-- In a notebook: **Select Kernel** → `mlcourse (.venv)`
+```bash
+python -m pip install -e ".[all]"
+```
 
 ## Common commands
 
 ```bash
-make format
-make lint
-make test
+make format       # ruff format + fix
+make lint         # ruff + mypy
+make test         # pytest (all weeks)
+make test-week-N  # pytest just week N's problem set
 ```
 
 ## Repo layout
 
-- `src/mlcourse/` — Python package (your reusable code)
-- `notebooks/` — notebooks (keep them light; push logic into `src/`)
-- `data/` — raw/interim/processed data (not committed except small samples)
-- `models/` — saved checkpoints
-- `reports/` — figures and write-ups
-- `tests/` — pytest tests
-
-## GitHub / first push
-
-```bash
-git init
-git add -A
-git commit -m "Week 0 scaffolding"
-git branch -M main
-git remote add origin <YOUR_REPO_URL>
-git push -u origin main
+```
+ml-course/
+├── SYLLABUS.md              # week-by-week detailed schedule
+├── PORTFOLIO.md             # recruiter-facing index of artifacts
+├── modules/                 # course content (lecture notes, readings, problem sets)
+│   ├── 01_math_foundations/
+│   ├── 02_stat_learning/
+│   ├── ...
+│   └── 12_applied_capstone/
+├── portfolio/               # per-artifact shareable repos
+├── src/mlcourse/            # reusable library code (Trainer, autograd, configs, utils)
+├── capstone/                # your in-progress capstone (kicks off week 8)
+├── data/                    # raw / interim / processed (gitignored)
+├── models/                  # saved checkpoints (gitignored)
+├── reports/                 # figures, write-ups
+├── tests/                   # pytest (smoke + per-week problem-set graders)
+└── scripts/                 # bootstrap, dataset fetchers, CI helpers
 ```
 
-- CI runs via GitHub Actions: `.github/workflows/ci.yml`
-- Dependabot is enabled via `.github/dependabot.yml`
+## Contributing / issues
+
+This repo is structured as a personal course workspace. For bug reports or curriculum
+suggestions see `CONTRIBUTING.md`. CI runs ruff, mypy, and pytest on pushes and PRs.
+
+## License
+
+See `LICENSE`.
