@@ -4,6 +4,11 @@ This file tracks the review recommendations that **Phase E did not close**.
 The course is usable as-is; this is the explicit backlog for making it a real
 20-hr/week intensive rather than a strong skeleton.
 
+> **See [`PR_PLAN.md`](PR_PLAN.md) for the concrete plan that breaks this
+> backlog into ~38 focused pull requests grouped into 7 waves with explicit
+> dependencies, acceptance criteria, and a minimum-viable-honest landing
+> order.**
+
 ## High priority (pedagogy)
 
 - **3× expansion of lecture notes.** Current density is ~1 page/week; a real
