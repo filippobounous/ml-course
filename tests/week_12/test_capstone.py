@@ -136,6 +136,59 @@ def test_pde_residual_shape(pinn_mod):
     assert r.shape == (8, 1)
 
 
+def test_gradnorm_reweighter_brings_grad_norms_toward_parity(pinn_mod):
+    """Two losses with dramatically different gradient magnitudes should have
+    their weights adjusted so the *weighted* gradient norms become comparable.
+    """
+    import torch
+
+    torch.manual_seed(0)
+    # One small tanh MLP, two losses: loss_a is scaled 1e-3, loss_b scaled 1.0
+    # — raw gradient norms differ by 1000×.
+    net = torch.nn.Sequential(torch.nn.Linear(1, 4), torch.nn.Tanh(), torch.nn.Linear(4, 1))
+    x = torch.randn(8, 1)
+    out = net(x)
+    loss_a = 1e-3 * (out**2).mean()
+    loss_b = 1.0 * ((out - 1.0) ** 2).mean()
+
+    reweighter = pinn_mod.GradNormReweighter(["a", "b"], alpha=0.0)  # no EMA
+    weights = reweighter.step({"a": loss_a, "b": loss_b}, list(net.parameters()))
+
+    # weighted grads should now be roughly equal in L2 norm.
+    def grad_norm(loss, params):
+        grads = torch.autograd.grad(loss, params, retain_graph=True)
+        return float(sum((g**2).sum() for g in grads) ** 0.5)
+
+    norm_a = weights["a"] * grad_norm(loss_a, list(net.parameters()))
+    norm_b = weights["b"] * grad_norm(loss_b, list(net.parameters()))
+    # After reweighting with alpha=0, they should match to within a factor of 2.
+    assert 0.5 < norm_a / norm_b < 2.0
+    # And the raw ratio should be much worse (bigger than 10× gap).
+    raw_ratio = grad_norm(loss_a, list(net.parameters())) / max(
+        grad_norm(loss_b, list(net.parameters())), 1e-12
+    )
+    assert raw_ratio < 0.1 or raw_ratio > 10.0
+
+
+def test_gradnorm_reweighter_preserves_keys(pinn_mod):
+    import torch
+
+    net = torch.nn.Linear(2, 1)
+    x = torch.randn(4, 2)
+    losses = {"res": (net(x) ** 2).mean(), "ic": ((net(x) - 1) ** 2).mean()}
+    reweighter = pinn_mod.GradNormReweighter(list(losses), alpha=0.5)
+    weights = reweighter.step(losses, list(net.parameters()))
+    assert set(weights.keys()) == {"res", "ic"}
+    for w in weights.values():
+        assert w > 0.0
+
+
+def test_pinn_config_exposes_gradnorm_option(pinn_mod):
+    cfg = pinn_mod.PINNConfig(loss_weighting="gradnorm")
+    assert cfg.loss_weighting == "gradnorm"
+    assert cfg.reweight_every > 0
+
+
 # -- Walk-forward stat-arb (uses the torch-free Week-4 engine) -----------------
 
 

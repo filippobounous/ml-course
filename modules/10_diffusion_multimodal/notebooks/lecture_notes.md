@@ -87,4 +87,36 @@ Use `open_clip` (LAION's open-weights implementation) for retrieval / zero-shot 
 
 Work the problem set in `../problems/README.md`. Build the portfolio artifact
 in `../../../portfolio/10_ddpm/`: UNet-DDPM on FashionMNIST, DDPM-vs-DDIM
-ablation (step count vs sample quality), CLIP zero-shot retrieval demo.
+ablation (step count vs sample quality), classifier-free guidance,
+CLIP zero-shot retrieval demo.
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1–§2 forward / reverse | 4 | Derive α̅ recursion; derive the DDPM ELBO → simple-loss reduction with pen and paper. |
+| §3 score matching | 2 | Verify Tweedie's formula; relate ε-prediction and score explicitly. |
+| §4 DDIM | 2 | Derive the DDIM update; verify η=0 determinism on a toy problem. |
+| §5 SDE view | 2 | Connect Week 1 Langevin to reverse-time VP-SDE. |
+| §6 CFG | 2 | Derive CFG from the Bayes rule; implement in the portfolio UNet. |
+| §7 multimodal | 2 | Run `open_clip` ViT-B/32 zero-shot on a small image folder. |
+| Artifact | 4 | UNet + DDPM+CFG training + DDPM/DDIM ablation figure. |
+| Office hours | 2 | Cross-check with `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+1. Can I state the DDPM forward process and derive $q(x_t | x_0)$ in closed form?
+2. Can I derive the "simple" ε-prediction loss from the ELBO?
+3. Can I explain why DDIM with η=0 is deterministic and why fewer steps suffice?
+4. Can I derive the CFG extrapolation formula $\epsilon = (1+w)\epsilon_\text{cond} - w\epsilon_\text{uncond}$ from $\log p(x|y) + w(\log p(x|y) - \log p(x))$?
+5. Can I connect the discrete DDPM chain to a continuous-time VP-SDE and identify its reverse?
+
+## Physics bridge
+
+- **Forward diffusion ≡ overdamped Langevin in reverse-temperature time.** The VP-SDE $dx = -\tfrac12\beta(t) x \, dt + \sqrt{\beta(t)} \, dW$ is the heat equation you've seen a dozen times — $\partial_t p = \nabla\cdot(x p) + \Delta p$ — viewed as a diffusion process. The stationary measure as $t \to \infty$ is the isotropic Gaussian.
+- **Reverse process ≡ time-reversal with a score term.** By a classic Anderson 1982 result, a diffusion SDE has an exact reverse-time SDE that includes the **score** $\nabla_x \log p_t(x)$. Learning $\epsilon_\theta$ is learning this score; sampling from the reverse SDE with the learned score is stochastic quantisation run backwards.
+- **Classifier-free guidance ≡ tempered Gibbs.** With guidance weight $w$, the effective sampled density is $p(x|y)^{1+w} / p(x)^w$, up to a constant — i.e. an "over-temperature" version of the conditional distribution. The connection to tempering in statistical mechanics is exact. This is why very large $w$ produces oversaturated, mode-seeking samples: you're sampling from a very peaked Gibbs distribution.
+
+Diffusion is where the physics / ML bridge pays off most dramatically — every insight from stochastic mechanics has a direct generative-model counterpart.

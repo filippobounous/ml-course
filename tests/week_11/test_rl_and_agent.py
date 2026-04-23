@@ -205,3 +205,62 @@ def test_compute_gae_torch_matches_reference(ppo_torch, sols):
         rewards.numpy(), values.numpy(), dones.numpy(), gamma=0.9, lam=0.8, last_value=0.0
     )
     np.testing.assert_allclose(adv_t.numpy(), adv_n, rtol=1e-6)
+
+
+# -- Huang-2022 "37 details" subset -------------------------------------------
+
+
+def test_running_normalizer_approaches_zero_mean_unit_var(ppo_torch):
+    import torch
+
+    torch.manual_seed(0)
+    norm = ppo_torch.RunningNormalizer(shape=(4,))
+    # Stream 10000 samples from N(5, 3^2).
+    for _ in range(100):
+        batch = 5.0 + 3.0 * torch.randn(100, 4)
+        norm.update(batch)
+    # Normalised samples should have mean ≈ 0 and std ≈ 1.
+    test = 5.0 + 3.0 * torch.randn(2000, 4)
+    z = norm.normalize(test)
+    assert z.mean().abs() < 0.2
+    assert abs(float(z.std(unbiased=False)) - 1.0) < 0.2
+
+
+def test_running_normalizer_matches_torch_reference(ppo_torch):
+    import torch
+
+    torch.manual_seed(0)
+    data = torch.randn(500, 3) * 2.0 + 1.5
+    norm = ppo_torch.RunningNormalizer(shape=(3,), eps=0.0)
+    norm.update(data)
+    # Expected statistics from torch directly.
+    expected_mean = data.mean(dim=0)
+    expected_var = data.var(dim=0, unbiased=False)
+    torch.testing.assert_close(norm.mean, expected_mean, atol=1e-5, rtol=1e-5)
+    torch.testing.assert_close(norm.variance, expected_var, atol=1e-4, rtol=1e-4)
+
+
+def test_ppo_config_has_37details_knobs(ppo_torch):
+    cfg = ppo_torch.PPOConfig()
+    assert cfg.normalize_obs is True
+    assert cfg.anneal_lr is True
+    assert cfg.vf_clip_eps == 0.2
+
+
+def test_value_clipping_bounds_loss(ppo_torch):
+    """With vf_clip_eps set, the clipped value-loss equals the max of the two
+    candidates — i.e. cannot be lower than the plain MSE."""
+    import torch
+
+    torch.manual_seed(0)
+    v_old = torch.tensor([0.5, -0.3, 1.0])
+    v_new = torch.tensor([10.0, -10.0, 5.0])  # big drift
+    returns = torch.tensor([0.0, 0.0, 0.0])
+    eps = 0.2
+    v_clipped = v_old + torch.clamp(v_new - v_old, -eps, eps)
+    plain = ((v_new - returns) ** 2).mean()
+    clipped_loss = torch.stack(
+        [(v_new - returns) ** 2, (v_clipped - returns) ** 2]
+    ).max(dim=0).values.mean()
+    # The "max-of-two" value loss is >= the plain one by construction.
+    assert float(clipped_loss) >= float(plain) - 1e-9

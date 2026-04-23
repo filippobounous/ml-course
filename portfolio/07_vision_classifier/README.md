@@ -8,8 +8,11 @@ conv block, and produce an **FGSM adversarial-robustness curve**.
 - `classifier.py` — `get_cifar10_loaders()`, `resnet18_for_cifar()`
   (3×3 stem + no maxpool, standard CIFAR recipe), `transfer_resnet18()`
   (ImageNet-pretrained feature extractor), `GradCAM`, `fgsm()`.
-- `demo.py` — end-to-end training + Grad-CAM + FGSM sweep. Runs in ~30 min on
-  MPS, ~3 h on CPU. Use `--quick` for a one-epoch smoke check.
+- `demo.py` — end-to-end training **via `mlcourse.Trainer`** + Grad-CAM +
+  FGSM sweep. Runs in ~30 min on MPS, ~3 h on CPU. Use `--quick` for a
+  one-epoch smoke check. This is the first downstream week that consumes
+  the Week-6 `Trainer` harness; `tests/week_07/test_slow_trainer_integration.py`
+  guards the integration.
 
 ## Reproduce
 

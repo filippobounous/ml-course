@@ -99,3 +99,31 @@ Work the problem set in `../problems/README.md`. Build the micrograd engine in
 `../../../portfolio/05_micrograd/` (reference implementation lives under
 `src/mlcourse/autograd/`). Make sure your unit tests compare gradients both
 to numerical gradients and to `torch.autograd` for at least six small graphs.
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1–§3 autodiff | 3 | Derive the chain-rule-on-DAG story by hand on a 2-3 node toy graph. |
+| §4 topological order | 1 | Run a trace of backward() on paper for `x*x*x`. |
+| §5 optimisers | 3 | Derive Adam bias correction; compare SGD vs momentum vs Adam on a quadratic. |
+| §6 init | 2 | Prove the Glorot / He variance claims; measure them in NumPy on a 5-layer net. |
+| §7 normalisation | 2 | Read the BN paper; notice what breaks when batch size = 1. |
+| Problem set + artifact | 7 | Ship `portfolio/05_micrograd/`: Value, MLP, unit tests, two-moons demo. |
+| Office hours | 2 | Cross-check against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+1. Can I write a 20-line implementation of reverse-mode autodiff for scalar ops from memory?
+2. Can I explain **why** reverse-mode is O(ops), not O(ops × params)?
+3. Can I state the Glorot and He variance formulas and justify each from first principles?
+4. Can I predict what happens to a 10-layer ReLU net initialised with $\sigma = 1$ (vanishing or exploding gradients?) before running it?
+5. Can I derive Adam's bias correction and explain when it matters most?
+
+## Physics bridge
+
+- **Reverse-mode autodiff ≡ adjoint method.** In control theory / PDE-constrained optimisation you solve a state equation $\dot h = f(h, \theta)$ forward, then an *adjoint* equation backward to compute $\partial L / \partial \theta$ in O(1) extra memory (vs "backprop through time"). Reverse-mode autodiff is the discrete, finite-graph version of exactly this trick. Neural ODEs (W12) make the connection explicit: `odeint_adjoint` is reverse-mode autodiff on a continuous graph.
+- **Init as a random-matrix problem.** $W$ is a $d_\text{out} \times d_\text{in}$ random matrix; the singular-value spectrum at initialisation controls signal propagation. Glorot/He pin the spectrum so that the variance of activations is preserved across depth — exactly the "dynamical isometry" literature (Pennington et al. 2017).
+- **Optimisation landscape.** The loss of a random MLP over random data has the statistics of a spin glass (Choromanska et al. 2015). Every practical heuristic (momentum, Adam, batch size) pushes back against a landscape we haven't characterised analytically. Keeping this in mind helps you resist the urge to over-interpret any single training curve.

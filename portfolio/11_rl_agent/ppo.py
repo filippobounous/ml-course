@@ -33,6 +33,53 @@ class PPOConfig:
     lr: float = 3e-4
     max_grad_norm: float = 0.5
     seed: int = 0
+    # --- Huang et al. 2022 "37 details" subset --------------------------------
+    # Normalise observations with a Welford running mean/std.
+    normalize_obs: bool = True
+    # Clip the value-function loss symmetrically around the old value (CleanRL).
+    vf_clip_eps: float | None = 0.2
+    # Linearly anneal the learning rate from `lr` → 0 over `total_steps`.
+    anneal_lr: bool = True
+    # Anneal the clip range alongside the learning rate (optional — default off).
+    anneal_clip: bool = False
+
+
+class RunningNormalizer:
+    """Welford-style running mean / variance estimator for observation vectors.
+
+    Numerically stable in an online streaming setting; standard in PPO
+    reference implementations (CleanRL, stable-baselines3).
+    """
+
+    def __init__(self, shape: tuple[int, ...], eps: float = 1e-4) -> None:
+        self.count = eps
+        self.mean = torch.zeros(shape, dtype=torch.float32)
+        self.M2 = torch.zeros(shape, dtype=torch.float32)
+
+    def update(self, x: torch.Tensor) -> None:
+        # x: (batch, *shape). Accumulate mean + M2 in fp32 on CPU for determinism.
+        x_cpu = x.detach().to("cpu", dtype=torch.float32)
+        batch_mean = x_cpu.mean(dim=0)
+        batch_var = x_cpu.var(dim=0, unbiased=False)
+        batch_count = x_cpu.shape[0]
+        delta = batch_mean - self.mean
+        tot_count = self.count + batch_count
+        new_mean = self.mean + delta * batch_count / tot_count
+        self.M2 = (
+            self.M2
+            + batch_var * batch_count
+            + delta**2 * self.count * batch_count / tot_count
+        )
+        self.mean = new_mean
+        self.count = tot_count
+
+    @property
+    def variance(self) -> torch.Tensor:
+        return self.M2 / max(self.count, 1)
+
+    def normalize(self, x: torch.Tensor) -> torch.Tensor:
+        std = torch.sqrt(self.variance + 1e-8).to(x.device)
+        return (x - self.mean.to(x.device)) / std
 
 
 class ActorCritic(nn.Module):
@@ -73,7 +120,12 @@ def compute_gae_torch(
 
 
 def train(env_fn, cfg: PPOConfig | None = None, device: str = "cpu") -> dict:
-    """Train PPO end-to-end. `env_fn()` returns a fresh gymnasium env."""
+    """Train PPO end-to-end. `env_fn()` returns a fresh gymnasium env.
+
+    Implements the Huang-2022 "37 details" subset listed on `PPOConfig`:
+    observation normalisation, advantage normalisation (already present),
+    linear LR annealing, and value-loss clipping.
+    """
     cfg = cfg or PPOConfig()
     torch.manual_seed(cfg.seed)
 
@@ -82,6 +134,8 @@ def train(env_fn, cfg: PPOConfig | None = None, device: str = "cpu") -> dict:
     n_actions = env.action_space.n
     model = ActorCritic(obs_dim, n_actions).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr)
+
+    obs_norm = RunningNormalizer(shape=(obs_dim,)) if cfg.normalize_obs else None
 
     obs_np, _ = env.reset(seed=cfg.seed)
     obs = torch.as_tensor(obs_np, dtype=torch.float32, device=device)
@@ -100,16 +154,24 @@ def train(env_fn, cfg: PPOConfig | None = None, device: str = "cpu") -> dict:
         val_buf = torch.zeros(cfg.steps_per_rollout, device=device)
         done_buf = torch.zeros(cfg.steps_per_rollout, device=device)
 
+        raw_obs_buf = torch.zeros((cfg.steps_per_rollout, obs_dim), device=device)
         for step in range(cfg.steps_per_rollout):
+            # Update the normalizer online with the raw obs, then normalise.
+            if obs_norm is not None:
+                obs_norm.update(obs.unsqueeze(0))
+                obs_input = obs_norm.normalize(obs)
+            else:
+                obs_input = obs
             with torch.no_grad():
-                logits, value = model(obs)
+                logits, value = model(obs_input)
                 dist = Categorical(logits=logits)
                 action = dist.sample()
                 log_prob = dist.log_prob(action)
 
             next_obs_np, reward, terminated, truncated, _info = env.step(int(action))
             done = bool(terminated or truncated)
-            obs_buf[step] = obs
+            raw_obs_buf[step] = obs
+            obs_buf[step] = obs_input  # store the *normalised* observation for training
             act_buf[step] = action
             logp_buf[step] = log_prob
             rew_buf[step] = reward
@@ -124,13 +186,21 @@ def train(env_fn, cfg: PPOConfig | None = None, device: str = "cpu") -> dict:
             obs = torch.as_tensor(next_obs_np, dtype=torch.float32, device=device)
             total_steps_done += 1
 
-        # Last value for GAE bootstrap.
+        # Last value for GAE bootstrap (also normalised).
         with torch.no_grad():
-            _, last_value = model(obs)
+            last_input = obs_norm.normalize(obs) if obs_norm is not None else obs
+            _, last_value = model(last_input)
         adv, returns = compute_gae_torch(
             rew_buf, val_buf, done_buf, gamma=cfg.gamma, lam=cfg.gae_lambda, last_value=last_value
         )
         adv = (adv - adv.mean()) / (adv.std() + 1e-8)
+
+        # Linear LR anneal → 0 across total_steps.
+        frac = max(1.0 - total_steps_done / cfg.total_steps, 0.0)
+        if cfg.anneal_lr:
+            for pg in optimizer.param_groups:
+                pg["lr"] = cfg.lr * frac
+        clip_eps = cfg.clip_eps * (frac if cfg.anneal_clip else 1.0)
 
         # -- Update ----------------------------------------------------------
         idx = torch.arange(cfg.steps_per_rollout, device=device)
@@ -143,9 +213,21 @@ def train(env_fn, cfg: PPOConfig | None = None, device: str = "cpu") -> dict:
                 new_log_prob = dist.log_prob(act_buf[batch])
                 ratio = torch.exp(new_log_prob - logp_buf[batch])
                 unclipped = ratio * adv[batch]
-                clipped = torch.clamp(ratio, 1 - cfg.clip_eps, 1 + cfg.clip_eps) * adv[batch]
+                clipped = torch.clamp(ratio, 1 - clip_eps, 1 + clip_eps) * adv[batch]
                 policy_loss = -torch.min(unclipped, clipped).mean()
-                value_loss = nn.functional.mse_loss(values, returns[batch])
+                # Value-function clipping (Huang 2022 §5): min of two losses,
+                # one on the new value, one on the old value clipped by ε.
+                if cfg.vf_clip_eps is not None:
+                    v_old = val_buf[batch]
+                    v_clipped = v_old + torch.clamp(
+                        values - v_old, -cfg.vf_clip_eps, cfg.vf_clip_eps
+                    )
+                    vf_losses = torch.stack(
+                        [(values - returns[batch]) ** 2, (v_clipped - returns[batch]) ** 2]
+                    )
+                    value_loss = vf_losses.max(dim=0).values.mean()
+                else:
+                    value_loss = nn.functional.mse_loss(values, returns[batch])
                 entropy = dist.entropy().mean()
                 loss = policy_loss + cfg.vf_coef * value_loss - cfg.ent_coef * entropy
                 optimizer.zero_grad(set_to_none=True)

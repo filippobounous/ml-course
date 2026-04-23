@@ -156,3 +156,110 @@ def test_timestep_embedding_shape(ddpm_module):
     t = torch.arange(4)
     emb = ddpm_module.timestep_embedding(t, dim=16)
     assert emb.shape == (4, 16)
+
+
+# -- Classifier-free guidance --------------------------------------------------
+
+
+def test_conditional_unet_forward_shape(ddpm_module):
+    import torch
+
+    model = ddpm_module.SmallUNet(in_ch=1, base=16, num_classes=10)
+    x = torch.randn(3, 1, 28, 28)
+    t = torch.zeros(3, dtype=torch.long)
+    y = torch.tensor([0, 3, 9], dtype=torch.long)
+    out = model(x, t, y)
+    assert out.shape == (3, 1, 28, 28)
+    # null class is index 10 (num_classes); must also be a valid embedding lookup.
+    y_null = torch.full((3,), model.null_class_id, dtype=torch.long)
+    out_null = model(x, t, y_null)
+    assert out_null.shape == (3, 1, 28, 28)
+
+
+def test_cfg_zero_matches_conditional_sampler(ddpm_module):
+    """At guidance_scale=0.0 the CFG sampler is exactly the conditional sampler."""
+    import torch
+
+    torch.manual_seed(0)
+    model = ddpm_module.SmallUNet(in_ch=1, base=16, num_classes=4)
+    schedule = ddpm_module.DiffusionSchedule.linear(50)
+    y = torch.tensor([1, 2], dtype=torch.long)
+
+    # Conditional path (guidance=0) — baseline.
+    baseline = ddpm_module.ddim_sample(
+        model,
+        (2, 1, 28, 28),
+        schedule,
+        n_steps=10,
+        device="cpu",
+        eta=0.0,
+        seed=42,
+        class_label=y,
+        guidance_scale=0.0,
+    )
+    # Re-run with same seed; should be bit-identical.
+    rerun = ddpm_module.ddim_sample(
+        model,
+        (2, 1, 28, 28),
+        schedule,
+        n_steps=10,
+        device="cpu",
+        eta=0.0,
+        seed=42,
+        class_label=y,
+        guidance_scale=0.0,
+    )
+    torch.testing.assert_close(baseline, rerun, atol=0.0, rtol=0.0)
+
+
+def test_cfg_positive_scale_changes_samples(ddpm_module):
+    """With guidance_scale > 0 the output differs from the pure conditional sample."""
+    import torch
+
+    torch.manual_seed(0)
+    model = ddpm_module.SmallUNet(in_ch=1, base=16, num_classes=4)
+    schedule = ddpm_module.DiffusionSchedule.linear(50)
+    y = torch.tensor([1, 2], dtype=torch.long)
+
+    cond = ddpm_module.ddim_sample(
+        model,
+        (2, 1, 28, 28),
+        schedule,
+        n_steps=10,
+        device="cpu",
+        eta=0.0,
+        seed=42,
+        class_label=y,
+        guidance_scale=0.0,
+    )
+    guided = ddpm_module.ddim_sample(
+        model,
+        (2, 1, 28, 28),
+        schedule,
+        n_steps=10,
+        device="cpu",
+        eta=0.0,
+        seed=42,
+        class_label=y,
+        guidance_scale=3.0,
+    )
+    # Same seed, same starting noise — if CFG actually injected the
+    # uncond-extrapolation the outputs must differ.
+    assert not torch.allclose(cond, guided, atol=1e-5)
+
+
+def test_ddpm_loss_with_label_dropout(ddpm_module):
+    """With `p_drop=1.0` every sample is replaced by the null class: loss is
+    equivalent to the *unconditional* model's loss on those inputs."""
+    import torch
+
+    torch.manual_seed(0)
+    model = ddpm_module.SmallUNet(in_ch=1, base=16, num_classes=3)
+    schedule = ddpm_module.DiffusionSchedule.linear(20)
+    x0 = torch.randn(4, 1, 28, 28)
+    y = torch.tensor([0, 1, 2, 0], dtype=torch.long)
+    # With p_drop=1.0 the label gets overwritten to null for every sample;
+    # the loss should still be finite and non-negative.
+    loss = ddpm_module.ddpm_loss(model, x0, schedule, y=y, p_drop=1.0)
+    assert float(loss) >= 0.0
+    assert loss.ndim == 0

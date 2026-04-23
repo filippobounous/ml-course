@@ -1,10 +1,10 @@
-# Syllabus — 12-Week ML/AI Course
+# Syllabus — 12-Week ML/AI Course (+ optional Week 13)
 
 An intensive, project-driven curriculum for learners with a strong quantitative
 background (theoretical physics, maths) and **tutorial-level ML priors**. Fits on
 **CPU / Apple Silicon (MPS)** — no CUDA GPU required.
 
-- **Duration:** 12 weeks, ~20 hr/week
+- **Duration:** 12 weeks, ~20 hr/week (plus an optional Week 13 on LLMs-as-dev-surface).
 - **Balance:** 30% theory / 40% code / 30% applied projects
 - **Outputs each week:** problem set (graded) + portfolio artifact
 
@@ -189,6 +189,17 @@ Pick **one primary track** for the capstone, touch the other.
 **Problem set:** derive the PINN loss for a heat equation · implement a walk-forward split · prove adjoint-method correctness for Neural ODEs.
 
 **Portfolio artifact:** `portfolio/12_capstone/` — **capstone project** (PINN or stat-arb), plus a **paper-reproduction ablation** (e.g. LoRA or DDPM figure) as a bonus artifact.
+
+## Week 13 (optional) — LLMs as a development surface
+
+Covers the piece of the brief Weeks 1–12 skipped: using frontier LLMs as an
+**external tool**, not as an implementation target. Claude Code / MCP /
+LLM-as-judge / cost modelling. The artifact integrates with Week 9's eval
+harness (drop-in LLM judge) and Week 11's agent (drop-in MCP tools).
+
+- Topics: agentic-coding workflows; Model Context Protocol (server anatomy, tools/resources); LLM-as-judge with position-bias mitigation; cost / latency modelling.
+- Readings: Anthropic Claude Code docs · MCP spec · Zheng et al. *MT-Bench* (2024) · Dubois et al. *AlpacaEval 2* (2024).
+- Portfolio: `portfolio/13_dev_surface/` — mockable LLM-judge wrapper + cost model + minimal MCP server + end-to-end demo.
 
 ---
 

@@ -16,10 +16,38 @@ DPO-tuned TinyLlama with a Gradio demo — that is recruiter-ready by week 12.
 
 ---
 
+## Verified vs aspirational (honesty table)
+
+The course promises concrete numbers (accuracies, Sharpes, win rates). Some of
+those numbers have been **run on real hardware and committed as reference
+outputs**; others are still **aspirational targets** — the code runs but the
+claim hasn't been independently verified on someone else's machine. This
+table is updated as each learner confirms a number.
+
+| Artifact | Code runs end-to-end | Reported metric verified | Runtime verified |
+|---|---|---|---|
+| W2 NumPy linreg (`02_numpy_linreg`) | ✅ | ✅ matches sklearn to 1e-9 | ✅ < 1 min |
+| W3 tabular benchmark (`03_tabular_benchmark`) | ✅ (needs OpenML) | ⏳ aspirational | ⏳ |
+| W4 PCA stat-arb (`04_pca_statarb`) | ✅ | ✅ IS Sharpe ≈ 3.2 / OOS ≈ 2.9 on sim | ✅ seconds |
+| W5 micrograd (`05_micrograd`) | ✅ | ✅ ≥ 88% two-moons acc (slow test) | ✅ < 1 min |
+| W6 Trainer harness (`06_trainer`) | ✅ (needs torch) | ⏳ aspirational | ⏳ |
+| W7 vision classifier (`07_vision_classifier`) | ✅ (needs torch) | ⏳ 90% CIFAR-10 aspirational | ⏳ 30 min MPS |
+| W8 tiny GPT (`08_tinygpt`) | ✅ (needs torch + tokenizers) | ⏳ "coherent samples" aspirational | ⏳ ~6 h MPS |
+| W9 DPO TinyLlama (`09_dpo_tinyllama`) | ✅ (needs HF + TRL) | ⏳ ~55–60% win-rate aspirational | ⏳ ~3 h MPS |
+| W10 DDPM (`10_ddpm`) | ✅ (needs torch) | ⏳ pixel-stat distance aspirational | ⏳ ~2 h MPS |
+| W11 PPO + agent (`11_rl_agent`) | ✅ (torch + gymnasium; agent torch-free) | ⏳ PPO aspirational / agent ✅ | ⏳ |
+| W12 PINN + stat-arb (`12_capstone`) | ✅ (needs torch) | ⏳ $L^2 \le 10^{-2}$ aspirational | ⏳ 20 min MPS |
+| W13 LLM judge + MCP (`13_dev_surface`) | ✅ | ✅ (cost-model and judge parser unit-tested) | ✅ seconds |
+
+**Legend.** ✅ verified on a real machine; ⏳ aspirational (target stated, not yet confirmed). Confirm
+a row by running the artifact's `demo.py`, filing a PR that ticks the box, and
+attaching the resulting log / figure to `portfolio/<artifact>/verified.md`.
+
 ## Start here
 
 - **Read the syllabus:** [`SYLLABUS.md`](SYLLABUS.md) — week-by-week plan, readings, problem sets, artifacts.
 - **Browse the portfolio:** [`PORTFOLIO.md`](PORTFOLIO.md) — what you will ship and how to present it.
+- **Known gaps:** [`TODO.md`](TODO.md) — review-surfaced issues not yet closed.
 - **Install the environment:** see **Setup** below.
 
 ## Course map

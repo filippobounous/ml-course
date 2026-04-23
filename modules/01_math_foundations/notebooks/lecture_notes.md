@@ -131,3 +131,36 @@ Discretisation: $X_{t+1} = X_t - \nabla U(X_t) \Delta t + \sqrt{2 \Delta t} \, \
 ## What to do with these notes
 
 Work the problem set in `../problems/README.md`. In particular: derive every inequality you use, implement the pseudoinverse and Gaussian MLE in NumPy (reference code in `../problems/solutions.py`), and simulate the double-well Langevin SDE.
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 linalg | 4 | Derive SVD identities with pen and paper; recompute all four fundamental subspaces on a rank-deficient 3×4 matrix. |
+| §2 probability / info theory | 4 | Derive KL ≥ 0, Pinsker; compute entropies for 3 exponential-family examples. |
+| §3 optimisation | 3 | Prove smooth-convex GD rate, reproduce the bound numerically on a toy quadratic. |
+| §4 SDE primer | 2 | Simulate the double-well Langevin; overlay with analytical Gibbs. |
+| Problem set | 5 | 2 theory + 2 implementation + 1 applied, test-graded where possible. |
+| Office-hours / review | 2 | Check your proofs against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 2, you should be able to answer "yes" to all of:
+
+1. Can I state the four pseudoinverse (Moore–Penrose) axioms and verify them for a random matrix?
+2. Can I derive Pinsker's inequality from Jensen + Gibbs?
+3. Can I state and prove the O(1/T) convergence bound for smooth-convex GD?
+4. Can I simulate an overdamped Langevin SDE and identify its stationary distribution?
+5. Do I see why KL(p‖q) is *not* a metric and why that matters for the ELBO?
+
+## Physics bridge
+
+For a theoretical physicist, the single most useful re-framing:
+
+- **Exponential families ↔ Gibbs measures.** A natural-parameter exponential family $p(x;\theta) = h(x)\exp(\theta^\top T(x) - A(\theta))$ is precisely a **Gibbs / Boltzmann** distribution with Hamiltonian $-\theta^\top T(x)$ and partition function $Z(\theta) = e^{A(\theta)}$. The log-partition $A$ is the **Helmholtz free energy** $F = -\log Z$; its first derivative (mean of $T$) is the **internal energy response**, its second (covariance of $T$) is **susceptibility** (Fluctuation–Dissipation).
+- **Fisher information ↔ metric on statistical manifold.** The Fisher matrix $\mathcal{F}(\theta)$ is the natural Riemannian metric on the family $\{p(\cdot;\theta)\}$. "Natural gradient" is gradient descent on this curved manifold — same object that appears in information geometry.
+- **Langevin SDE ↔ overdamped stochastic quantisation.** Diffusion models (W10) run this SDE with a *learned* potential $U = -\log p_\text{data}$. The "reverse-time" SDE is the starting point of score-based generative modelling. You've already derived the stationary measure here.
+
+Keep these bridges live; they're the backbone of W4 (PCA ≡ modes of a centred Gaussian), W5 (backprop ≡ adjoint method), and W10 (diffusion ≡ reverse Langevin).

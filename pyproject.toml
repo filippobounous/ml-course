@@ -122,6 +122,9 @@ line-ending = "lf"
 minversion = "8.0"
 addopts = "-q"
 testpaths = ["tests"]
+markers = [
+  "slow: long-running integration tests that train a real model (use --run-slow to include)",
+]
 
 [tool.mypy]
 python_version = "3.11"

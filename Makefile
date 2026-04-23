@@ -1,7 +1,7 @@
-.PHONY: help install-dev install-all format lint test smoke \
-        week-1 week-2 week-3 week-4 week-5 week-6 week-7 week-8 week-9 week-10 week-11 week-12 \
+.PHONY: help install-dev install-all format lint test test-slow smoke \
+        week-1 week-2 week-3 week-4 week-5 week-6 week-7 week-8 week-9 week-10 week-11 week-12 week-13 \
         test-week-1 test-week-2 test-week-3 test-week-4 test-week-5 test-week-6 \
-        test-week-7 test-week-8 test-week-9 test-week-10 test-week-11 test-week-12 \
+        test-week-7 test-week-8 test-week-9 test-week-10 test-week-11 test-week-12 test-week-13 \
         fetch-data portfolio-build clean
 
 help:
@@ -40,6 +40,9 @@ lint:
 
 test:
 	pytest
+
+test-slow:
+	pytest --run-slow -q
 
 smoke:
 	python -c "import mlcourse; print('mlcourse', mlcourse.__version__ if hasattr(mlcourse,'__version__') else 'ok')"

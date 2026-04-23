@@ -33,9 +33,15 @@ class PINNConfig:
     lr: float = 1e-3
     max_iters: int = 4_000
     nu: float = 0.01 / 3.14159265
+    # Loss-weighting scheme: "fixed" uses (lambda_res, lambda_ic, lambda_bc);
+    # "gradnorm" adapts the weights every `reweight_every` steps to equalise
+    # per-loss gradient norms (Wang, Yu, Perdikaris 2022 §4, simplified).
+    loss_weighting: str = "fixed"
     lambda_res: float = 1.0
     lambda_ic: float = 10.0
     lambda_bc: float = 10.0
+    reweight_every: int = 100
+    reweight_alpha: float = 0.9  # EMA smoothing on the new weights
     seed: int = 0
 
 
@@ -92,6 +98,39 @@ def sample_points(cfg: PINNConfig, device: str) -> dict[str, torch.Tensor]:
     }
 
 
+class GradNormReweighter:
+    """Adaptive PINN loss-weighter (Wang, Yu, Perdikaris 2022, simplified).
+
+    Given named loss tensors, compute the mean gradient-norm of each w.r.t.
+    the model parameters, and set each loss's weight so the **weighted**
+    gradient norms are equal. EMA-smoothed to stabilise training.
+    """
+
+    def __init__(self, names: list[str], alpha: float = 0.9) -> None:
+        self.names = list(names)
+        self.alpha = alpha
+        self.weights = dict.fromkeys(self.names, 1.0)
+
+    def step(
+        self, losses: dict[str, torch.Tensor], params: list[torch.Tensor]
+    ) -> dict[str, float]:
+        grad_norms: dict[str, float] = {}
+        for name, loss in losses.items():
+            grads = torch.autograd.grad(
+                loss, params, retain_graph=True, allow_unused=True, create_graph=False
+            )
+            norm = 0.0
+            for g in grads:
+                if g is not None:
+                    norm += float((g**2).sum())
+            grad_norms[name] = norm**0.5 + 1e-12
+        mean_gn = sum(grad_norms.values()) / len(grad_norms)
+        for name in self.names:
+            target = mean_gn / grad_norms[name]
+            self.weights[name] = self.alpha * self.weights[name] + (1.0 - self.alpha) * target
+        return dict(self.weights)
+
+
 def train(cfg: PINNConfig | None = None, device: str = "cpu") -> dict:
     cfg = cfg or PINNConfig()
     torch.manual_seed(cfg.seed)
@@ -100,6 +139,11 @@ def train(cfg: PINNConfig | None = None, device: str = "cpu") -> dict:
 
     pts = sample_points(cfg, device)
     history: list[dict[str, float]] = []
+
+    reweighter: GradNormReweighter | None = None
+    lambdas = {"res": cfg.lambda_res, "ic": cfg.lambda_ic, "bc": cfg.lambda_bc}
+    if cfg.loss_weighting == "gradnorm":
+        reweighter = GradNormReweighter(list(lambdas.keys()), alpha=cfg.reweight_alpha)
 
     for step in range(1, cfg.max_iters + 1):
         # Residual loss.
@@ -111,7 +155,14 @@ def train(cfg: PINNConfig | None = None, device: str = "cpu") -> dict:
         # BC loss.
         pred_b = model(pts["x_b"], pts["t_b"])
         loss_bc = ((pred_b - pts["u_b"]) ** 2).mean()
-        loss = cfg.lambda_res * loss_r + cfg.lambda_ic * loss_ic + cfg.lambda_bc * loss_bc
+
+        if reweighter is not None and step % cfg.reweight_every == 0:
+            lambdas = reweighter.step(
+                {"res": loss_r, "ic": loss_ic, "bc": loss_bc},
+                list(model.parameters()),
+            )
+
+        loss = lambdas["res"] * loss_r + lambdas["ic"] * loss_ic + lambdas["bc"] * loss_bc
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
@@ -124,6 +175,9 @@ def train(cfg: PINNConfig | None = None, device: str = "cpu") -> dict:
                     "loss_r": float(loss_r),
                     "loss_ic": float(loss_ic),
                     "loss_bc": float(loss_bc),
+                    "lambda_res": float(lambdas["res"]),
+                    "lambda_ic": float(lambdas["ic"]),
+                    "lambda_bc": float(lambdas["bc"]),
                 }
             )
 

@@ -30,15 +30,9 @@ def main() -> None:
     args = parser.parse_args()
 
     import torch
-    from classifier import (
-        GradCAM,
-        evaluate,
-        fgsm,
-        get_cifar10_loaders,
-        resnet18_for_cifar,
-        train_one_epoch,
-    )
+    from classifier import GradCAM, evaluate, fgsm, get_cifar10_loaders, resnet18_for_cifar
 
+    from mlcourse.trainer import Trainer, TrainerConfig
     from mlcourse.utils import detect_device
 
     device = detect_device()
@@ -51,19 +45,32 @@ def main() -> None:
         train_loader.dataset.targets = train_loader.dataset.targets[:5000]  # type: ignore[attr-defined]
         args.epochs = 1
 
-    # -- scratch ResNet-18 ----------------------------------------------------
-    model = resnet18_for_cifar().to(device)
+    # -- scratch ResNet-18 (via the Week-6 Trainer harness) -------------------
+    model = resnet18_for_cifar()
     optimizer = torch.optim.SGD(
         model.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4, nesterov=True
     )
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+    trainer_cfg = TrainerConfig(
+        max_epochs=args.epochs,
+        lr=args.lr,
+        device=device,
+        seed=0,
+        grad_clip_norm=1.0,
+    )
+    trainer = Trainer(trainer_cfg)
 
-    print("\nTraining ResNet-18 (scratch)...")
-    for epoch in range(1, args.epochs + 1):
-        tl = train_one_epoch(model, train_loader, optimizer, device)
-        vl, va = evaluate(model, test_loader, device)
-        scheduler.step()
-        print(f"  epoch {epoch:2d}  train={tl:.4f}  test={vl:.4f}  acc={va:.4f}")
+    print("\nTraining ResNet-18 (scratch) via mlcourse.Trainer...")
+    trainer.fit(
+        model,
+        train_loader,
+        val_loader=test_loader,
+        loss_fn=torch.nn.functional.cross_entropy,
+        optimizer=optimizer,
+    )
+    for epoch, (tl, vl) in enumerate(
+        zip(trainer.history["train_loss"], trainer.history["val_loss"], strict=True), start=1
+    ):
+        print(f"  epoch {epoch:2d}  train={tl:.4f}  val={vl:.4f}")
 
     scratch_loss, scratch_acc = evaluate(model, test_loader, device)
 
