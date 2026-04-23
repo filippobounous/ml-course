@@ -125,6 +125,23 @@ markers = [
   "slow: long-running integration tests that train a real model (use --run-slow to include)",
 ]
 
+[tool.coverage.run]
+branch = true
+source = ["src/mlcourse"]
+omit = [
+  "src/mlcourse/configs/*",  # Hydra configs have no runtime code
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
 [tool.mypy]
 python_version = "3.11"
 warn_return_any = true

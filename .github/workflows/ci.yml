@@ -36,9 +36,18 @@ jobs:
         run: |
           mypy src
 
-      - name: Tests (pytest)
+      - name: Tests (pytest + coverage)
         run: |
-          pytest
+          pytest --cov=src/mlcourse --cov-report=xml --cov-report=term
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn
+          retention-days: 30
 
   # Slow integration gate: installs the DL + ops extras and runs the
   # `@pytest.mark.slow` tier. Exercises torch-gated shape checks and the
