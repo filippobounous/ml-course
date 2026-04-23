@@ -127,9 +127,7 @@ class SmallUNet(nn.Module):
         temb = self.time_mlp(timestep_embedding(t, self.t_dim))
         if self.class_emb is not None:
             if y is None:
-                y = torch.full(
-                    (x.shape[0],), self.null_class_id, device=x.device, dtype=torch.long
-                )
+                y = torch.full((x.shape[0],), self.null_class_id, device=x.device, dtype=torch.long)
             temb = temb + self.class_emb(y)
         h = self.in_conv(x)
         d1 = self.down1(h, temb)
@@ -267,8 +265,6 @@ def ddim_sample(
         x = torch.sqrt(ab_prev) * x0_hat + dir_term + sigma * noise
     t = int(indices[0])
     t_batch = torch.full((shape[0],), t, device=device, dtype=torch.long)
-    eps = _cfg_epsilon(
-        model, x, t_batch, class_label=class_label, guidance_scale=guidance_scale
-    )
+    eps = _cfg_epsilon(model, x, t_batch, class_label=class_label, guidance_scale=guidance_scale)
     ab_t = schedule.alpha_bars[t].to(device)
     return (x - torch.sqrt(1 - ab_t) * eps) / torch.sqrt(ab_t)

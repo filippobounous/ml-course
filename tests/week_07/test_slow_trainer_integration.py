@@ -52,11 +52,7 @@ def test_trainer_fit_on_tiny_cifar_like():
     )
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     trainer = Trainer(TrainerConfig(max_epochs=3, device="cpu", seed=0))
-    trainer.fit(
-        model, loader, loss_fn=torch.nn.functional.cross_entropy, optimizer=optimizer
-    )
+    trainer.fit(model, loader, loss_fn=torch.nn.functional.cross_entropy, optimizer=optimizer)
     history = trainer.history["train_loss"]
     assert len(history) == 3
-    assert history[-1] < history[0], (
-        f"train loss should drop: {history[0]:.4f} → {history[-1]:.4f}"
-    )
+    assert history[-1] < history[0], f"train loss should drop: {history[0]:.4f} → {history[-1]:.4f}"

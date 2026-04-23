@@ -259,8 +259,8 @@ def test_value_clipping_bounds_loss(ppo_torch):
     eps = 0.2
     v_clipped = v_old + torch.clamp(v_new - v_old, -eps, eps)
     plain = ((v_new - returns) ** 2).mean()
-    clipped_loss = torch.stack(
-        [(v_new - returns) ** 2, (v_clipped - returns) ** 2]
-    ).max(dim=0).values.mean()
+    clipped_loss = (
+        torch.stack([(v_new - returns) ** 2, (v_clipped - returns) ** 2]).max(dim=0).values.mean()
+    )
     # The "max-of-two" value loss is >= the plain one by construction.
     assert float(clipped_loss) >= float(plain) - 1e-9

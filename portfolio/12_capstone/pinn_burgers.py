@@ -111,9 +111,7 @@ class GradNormReweighter:
         self.alpha = alpha
         self.weights = dict.fromkeys(self.names, 1.0)
 
-    def step(
-        self, losses: dict[str, torch.Tensor], params: list[torch.Tensor]
-    ) -> dict[str, float]:
+    def step(self, losses: dict[str, torch.Tensor], params: list[torch.Tensor]) -> dict[str, float]:
         grad_norms: dict[str, float] = {}
         for name, loss in losses.items():
             grads = torch.autograd.grad(

@@ -87,9 +87,10 @@ def test_position_averaging_filters_unstable_verdicts(judge):
 
     def flaky(_prompt_text: str) -> str:
         call_state["n"] += 1
-        return "Answer A" if call_state["n"] % 2 == 1 else "Answer A"
-        # Always says "A". Then when A is baseline once and candidate once,
-        # the two orderings give opposite results → tie.
+        # Always says "A" regardless of position — averaging over both orders
+        # should reject this as a non-verdict (tie) because the two runs give
+        # opposite conclusions about which candidate won.
+        return "Answer A"
 
     j = judge.make_llm_judge(flaky, average_positions=True)
     assert j("p", "baseline", "candidate") == 0.0
