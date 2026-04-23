@@ -112,6 +112,19 @@ docker compose up --build jupyter
 # http://localhost:8888  (token set in docker-compose.yml)
 ```
 
+### Option C — Full dev Docker image (CPU torch + every extra)
+
+Preinstalled: base + dev + dl (CPU wheels) + llm + diffusion + rl + sciml + ops.
+Useful when you want every artifact runnable without fighting platform wheels.
+
+```bash
+make docker-dev              # build
+make docker-dev-shell        # drop into /work
+make docker-dev-test         # pytest --run-slow inside the container
+```
+
+Not for MPS — the course's MPS path is native (`scripts/bootstrap_macos.sh`).
+
 ### Installing the per-week dependency groups
 
 Each week has its own optional-dependency group. Install them as you progress, so you
