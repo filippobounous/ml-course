@@ -5,6 +5,31 @@ here on the `SimpleMarketMakerEnv` but works on any gymnasium discrete-action
 env with a flat observation space.
 
 Torch is required (`pip install -e '.[dl,rl]'`).
+
+Why PPO doesn't use `mlcourse.Trainer`
+--------------------------------------
+`Trainer.fit` is designed for objectives of the shape **"iterate over an
+(x, y) DataLoader; compute a loss per batch; step"**. PR 4 extended it with
+a `loss_fn=None` path for self-supervised losses (DDPM etc.), but PPO's
+structure is fundamentally different:
+
+  * **Rollout phase** — collect a trajectory by interacting with an env
+    (no DataLoader, no static dataset; the "data" depends on the current
+    policy).
+  * **Advantage computation** — a second pass over the rollout buffer,
+    bootstrapping the value estimate.
+  * **Multiple-epoch update** — K minibatch passes over the rollout,
+    computing policy / value / entropy losses per minibatch.
+
+Forcing this into `Trainer.fit` would mean either rebuilding the DataLoader
+per outer iteration (wasteful) or mutating Trainer internals. Instead PPO
+keeps its own training loop — a deliberate, documented exception. Future
+RL weeks (SAC, DQN) can follow the same pattern or share a small
+`mlcourse.rl.RolloutCollector` helper if more than one needs it.
+
+See also: Huang et al. 2022 "The 37 Implementation Details of PPO" — the
+subset implemented below (obs normalisation, advantage normalisation,
+value clipping, linear LR anneal) is noted in `PPOConfig`.
 """
 
 from __future__ import annotations
