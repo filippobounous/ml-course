@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - /trainer: default
+  - _self_
+
+trainer:
+  max_epochs: 10
+  lr: 0.0002
+  device: auto
+  seed: 0
+  grad_clip_norm: 1.0
+
+data:
+  root: data
+  batch_size: 128
+  quick_subset_size: 256
+
+diffusion:
+  T: 1000
+  schedule: linear
+
+out: checkpoint.pt
+
+quick: false
