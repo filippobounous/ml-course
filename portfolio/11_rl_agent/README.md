@@ -12,6 +12,12 @@ Two artifacts in one folder.
   advantages, clipped surrogate objective, entropy bonus, gradient clipping.
 - `train_ppo.py` — end-to-end training driver.
 
+> **Why PPO doesn't use `mlcourse.Trainer`.** `Trainer.fit` assumes a
+> DataLoader + per-batch loss shape; PPO's rollout → advantage → K-epoch
+> minibatch update structure doesn't fit. Deliberate exception; see the
+> docstring of `ppo.py` for the full explanation. Every other torch-based
+> week (W6, W7, W10, W12) uses `Trainer`.
+
 ### Reproduce
 
 ```bash
