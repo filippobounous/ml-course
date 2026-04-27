@@ -2,7 +2,8 @@
         week-1 week-2 week-3 week-4 week-5 week-6 week-7 week-8 week-9 week-10 week-11 week-12 week-13 \
         test-week-1 test-week-2 test-week-3 test-week-4 test-week-5 test-week-6 \
         test-week-7 test-week-8 test-week-9 test-week-10 test-week-11 test-week-12 test-week-13 \
-        fetch-data portfolio-build clean
+        fetch-data portfolio-build clean \
+        docker-dev docker-dev-shell docker-dev-test
 
 help:
 	@echo "Core targets:"
@@ -145,3 +146,14 @@ clean:
 	find . -type d -name ".pytest_cache" -prune -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -prune -exec rm -rf {} +
 	find . -type d -name ".ruff_cache" -prune -exec rm -rf {} +
+
+# --- Dev Docker image ---------------------------------------------------------
+# See `docker/Dockerfile.dev` and `docker-compose.dev.yml` for details.
+docker-dev:
+	docker compose -f docker-compose.dev.yml build dev
+
+docker-dev-shell: docker-dev
+	docker compose -f docker-compose.dev.yml run --rm dev bash
+
+docker-dev-test: docker-dev
+	docker compose -f docker-compose.dev.yml run --rm dev pytest --run-slow -q
