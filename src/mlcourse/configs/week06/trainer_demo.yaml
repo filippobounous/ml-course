@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - /trainer: default
+  - _self_
+
+trainer:
+  max_epochs: 5
+  lr: 0.01
+  device: cpu
+  seed: 42
+
+data:
+  n_train: 800
+  n_val: 200
+  d: 10
+  batch_size: 64
