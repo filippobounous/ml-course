@@ -1,5 +1,8 @@
 # ML/AI Course — for Quantitative Minds
 
+[![CI](https://github.com/filippobounous/ml-course/actions/workflows/ci.yml/badge.svg)](https://github.com/filippobounous/ml-course/actions/workflows/ci.yml)
+![coverage](https://img.shields.io/badge/coverage-artifact-blue?logo=codecov) ![python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?logo=python)
+
 A 12-week, ~20 hr/week intensive course that takes a quantitatively-literate learner
 (theoretical physics, maths, or equivalent) from **tutorial-level ML** to **research-grade
 fluency** in modern machine learning, deep learning, LLMs, diffusion, RL, and their
