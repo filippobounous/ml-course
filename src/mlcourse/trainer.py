@@ -69,9 +69,15 @@ class Trainer:
         train_loader: DataLoader,
         val_loader: DataLoader | None = None,
         *,
-        loss_fn: LossFn,
+        loss_fn: LossFn | None,
         optimizer: Optimizer,
     ) -> dict[str, list[float]]:
+        """Train `model` on `train_loader`.
+
+        If `loss_fn` is None the model is expected to produce the scalar loss
+        itself from the batch (useful for objectives that don't fit the
+        `(x, y) → loss` shape, e.g. DDPM / self-supervised / contrastive).
+        """
         self._require_torch()
         self._seed()
         self._init_wandb()
@@ -130,7 +136,18 @@ class Trainer:
         self.history = payload.get("history", {"train_loss": [], "val_loss": []})
 
     # -- Internals -------------------------------------------------------------
-    def _run_epoch(self, loader: DataLoader, loss_fn: LossFn, *, train: bool) -> float:
+    def _run_epoch(self, loader: DataLoader, loss_fn: LossFn | None, *, train: bool) -> float:
+        """Run one epoch.
+
+        Two modes:
+        1. **Standard supervised**: `loss_fn` is a callable `(logits, y) -> loss`.
+           Batches are unpacked into `(x, y)` and the model is called as `model(x)`.
+        2. **Custom loss**: `loss_fn is None`. The model itself is responsible for
+           computing the scalar loss — its forward must return either a scalar
+           tensor or a `(logits, loss)` pair. Used by W10 DDPM (custom
+           noise-prediction loss with a schedule) and any model whose loss
+           doesn't fit the `(x, y)` shape.
+        """
         import torch
 
         assert self.model is not None and self.optimizer is not None
@@ -143,12 +160,22 @@ class Trainer:
 
         with no_grad:
             for step, batch in enumerate(loader, start=1):
-                x, y = self._unpack(batch)
-                x = x.to(self.config.device)
-                y = y.to(self.config.device)
-                with self._autocast():
-                    logits = self.model(x)
-                    loss = loss_fn(logits, y) / self.config.grad_accum_steps
+                if loss_fn is None:
+                    # Custom-loss path: whole batch to device, model returns loss.
+                    batch = self._batch_to_device(batch)
+                    with self._autocast():
+                        out = self.model(*batch) if isinstance(batch, tuple) else self.model(batch)
+                        loss = out[1] if isinstance(out, tuple) else out
+                        loss = loss / self.config.grad_accum_steps
+                    count = self._batch_size(batch)
+                else:
+                    x, y = self._unpack(batch)
+                    x = x.to(self.config.device)
+                    y = y.to(self.config.device)
+                    with self._autocast():
+                        logits = self.model(x)
+                        loss = loss_fn(logits, y) / self.config.grad_accum_steps
+                    count = y.shape[0] if hasattr(y, "shape") else 1
 
                 if train:
                     loss.backward()
@@ -160,7 +187,6 @@ class Trainer:
                         self.optimizer.step()
                         self.optimizer.zero_grad(set_to_none=True)
 
-                count = y.shape[0] if hasattr(y, "shape") else 1
                 total_loss += float(loss.detach()) * self.config.grad_accum_steps * count
                 total_count += count
 
@@ -173,6 +199,29 @@ class Trainer:
         if isinstance(batch, dict):
             return batch["x"], batch["y"]
         raise TypeError(f"Unsupported batch type: {type(batch)!r}")
+
+    def _batch_to_device(self, batch: Any) -> Any:
+        """Move tensors / nested tuples of tensors to `self.config.device`."""
+        import torch as _t
+
+        device = self.config.device
+        if isinstance(batch, _t.Tensor):
+            return batch.to(device)
+        if isinstance(batch, (list, tuple)):
+            return tuple(b.to(device) if isinstance(b, _t.Tensor) else b for b in batch)
+        return batch
+
+    @staticmethod
+    def _batch_size(batch: Any) -> int:
+        import torch as _t
+
+        if isinstance(batch, _t.Tensor):
+            return int(batch.shape[0]) if batch.ndim else 1
+        if isinstance(batch, (list, tuple)):
+            for b in batch:
+                if isinstance(b, _t.Tensor) and b.ndim:
+                    return int(b.shape[0])
+        return 1
 
     def _autocast(self):
         import torch
