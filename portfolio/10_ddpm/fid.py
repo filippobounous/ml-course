@@ -28,15 +28,15 @@ Reference: Heusel et al. 2017, "GANs Trained by a Two Time-Scale Update Rule".
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
-try:
-    import numpy as np
+import numpy as np
+
+# torch is imported lazily inside the functions that need it so the pure
+# `statistics` / `frechet_distance` helpers (numpy + scipy only) can be
+# tested without the dl extra installed. See test_fid.py.
+if TYPE_CHECKING:  # pragma: no cover
     import torch
-    import torch.nn.functional as F
-except ImportError as e:  # pragma: no cover - environment guard
-    raise ImportError(
-        "FID requires numpy + torch. Install with `pip install -e '.[dl,diffusion]'`."
-    ) from e
 
 
 # ImageNet preprocessing constants (Inception was trained on these stats).
@@ -44,11 +44,25 @@ _IMAGENET_MEAN = (0.485, 0.456, 0.406)
 _IMAGENET_STD = (0.229, 0.224, 0.225)
 
 
-def load_inception(device: str = "cpu") -> torch.nn.Module:
+def _require_torch():
+    """Lazy torch import; raises a friendly error when the dl extra is missing."""
+    try:
+        import torch
+        import torch.nn.functional as F
+    except ImportError as e:  # pragma: no cover - environment guard
+        raise ImportError(
+            "FID feature extraction requires torch. Install with "
+            "`pip install -e '.[dl,diffusion]'`."
+        ) from e
+    return torch, F
+
+
+def load_inception(device: str = "cpu") -> Any:
     """Return a pretrained InceptionV3 with the final FC layer replaced by Identity.
 
     The output is the 2048-D pool3 feature vector — the canonical FID feature.
     """
+    torch, _ = _require_torch()
     from torchvision.models import Inception_V3_Weights, inception_v3
 
     model = inception_v3(weights=Inception_V3_Weights.IMAGENET1K_V1, aux_logits=True)
@@ -68,6 +82,7 @@ def _prepare_for_inception(images: torch.Tensor) -> torch.Tensor:
     Args:
         images: `(N, C, H, W)` with $C \\in \\{1, 3\\}$ and pixel range $[-1, 1]$.
     """
+    torch, F = _require_torch()
     if images.dim() != 4:
         raise ValueError(f"expected a 4-D tensor (N, C, H, W); got shape {tuple(images.shape)}")
     if images.shape[1] == 1:
@@ -100,6 +115,7 @@ def extract_features(
         device: where to run `feature_model`.
         batch_size: mini-batch size for the forward pass.
     """
+    torch, _ = _require_torch()
     feats: list[np.ndarray] = []
     images = images.to(device)
     with torch.no_grad():
