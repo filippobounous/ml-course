@@ -105,3 +105,40 @@ Work the problem set in `../problems/README.md`. Extend the `mlcourse.Trainer`
 skeleton under `src/mlcourse/trainer.py`; the portfolio artifact in
 `portfolio/06_trainer/` trains a small MLP on a toy regression task and
 demonstrates deterministic checkpoint round-trip.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three concrete REPL-doable exercises (`.detach()` vs `.clone()` traps, gradient accumulation = effective-batch-size $k \cdot B$ math, checkpoint round-trip determinism with all 6 RNG-state pieces).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 PyTorch mental model | 2 | Tensor / Module / DataLoader; play with `.requires_grad`, `.detach()`. |
+| §2 MPS gotchas | 2 | Run a tiny CPU-vs-MPS benchmark; toggle deterministic algorithms. |
+| §3 Reproducibility | 2 | Seed everything; verify with a "did seeding work?" script. |
+| §4 Training-loop patterns | 3 | Implement grad accumulation, clipping, autocast on a toy MLP. |
+| §5 Build the Trainer | 6 | Implement `mlcourse.Trainer.fit`; ship the portfolio demo. |
+| Problem set + W&B | 3 | Hydra multirun LR sweep; W&B logging guarded by env var. |
+| Office hours / review | 2 | Cross-check against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 7, you should be able to answer "yes" to all of:
+
+1. Can I explain `requires_grad`, leaf tensors, `.detach()` vs `.clone()`, and the difference between `.backward()` with and without `retain_graph`?
+2. Can I describe which ops `torch.autocast("mps")` casts to fp16 and which it leaves in fp32, and explain why both halves matter?
+3. Can I write a deterministic training loop where checkpoint → restart produces bit-identical weights, and list the six RNG / state pieces that need to be saved?
+4. Can I implement gradient accumulation correctly and explain why dividing the loss by `accum_steps` is what restores mean-gradient semantics?
+5. Can I configure a Hydra-driven training script with command-line overrides and a multirun LR sweep?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **Reverse-mode autograd on a tensor graph ≡ adjoint method** (same connection as W5, now vectorised on arrays instead of scalars). `tensor.backward()` solves the adjoint equation; `requires_grad=True` is the "tape this trajectory" flag.
+- **Mixed precision ↔ multi-scale physics.** You compute the bulk (matmul, conv) cheaply in fp16, but **accumulate in fp32** wherever precision matters (softmax, layer-norm, loss reductions). Same principle as keeping high precision only on the small set of slow / sensitive degrees of freedom while treating the bulk in a coarse-grained approximation — the asymptotic expansion is the physicist's analogue.
+- **Gradient accumulation ↔ Riemann sum.** Each backward pass adds a single mini-batch's gradient into `.grad`; averaging over $k$ mini-batches converges to the population gradient like a finite Riemann sum converges to an integral. The $/k$ factor is the integration step $\Delta t$.
+- **Determinism ↔ time-reversal symmetry of integrators.** Saving the full RNG state along with weights and optimiser is the discrete analogue of demanding a *symplectic* integrator: it lets you walk back from $t+1$ to $t$ exactly. Without RNG state, the dynamics are irreversible — same as adding numerical viscosity to an N-body integrator.
+
+Keep these bridges live; W7–W12 all import `mlcourse.Trainer`, and every torch-dependent week reuses the same checkpoint-determinism + autocast pattern.
