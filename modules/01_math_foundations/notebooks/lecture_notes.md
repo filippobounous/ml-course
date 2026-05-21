@@ -132,6 +132,8 @@ Discretisation: $X_{t+1} = X_t - \nabla U(X_t) \Delta t + \sqrt{2 \Delta t} \, \
 
 Work the problem set in `../problems/README.md`. In particular: derive every inequality you use, implement the pseudoinverse and Gaussian MLE in NumPy (reference code in `../problems/solutions.py`), and simulate the double-well Langevin SDE.
 
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three concrete numerical exercises (small-rank SVD, KL between two Gaussians, GD on a 1-D quadratic) that give you the muscle memory before the open-ended derivations.
+
 ---
 
 ## Time budget (≈ 20 hr)
