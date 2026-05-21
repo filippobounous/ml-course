@@ -32,6 +32,13 @@ dev = [
   "types-PyYAML>=6.0.12",
 ]
 
+# Documentation site (mkdocs-material) — used by the GitHub Pages build.
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5",
+  "pymdown-extensions>=10.0",
+]
+
 # Core deep-learning stack (W5 autograd onwards, W6 PyTorch, W7 CNNs)
 dl = [
   "torch>=2.3",
