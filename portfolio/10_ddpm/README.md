@@ -19,9 +19,10 @@ honest DDPM-vs-DDIM step-count ablation.
 ```bash
 python -m pip install -e ".[dl,diffusion,ops]"
 
-# 1) Train.
-python portfolio/10_ddpm/train.py             # full run
-python portfolio/10_ddpm/train.py --quick     # CI smoke
+# 1) Train (Hydra entry point — see src/mlcourse/configs/week10/ddpm.yaml).
+python portfolio/10_ddpm/train.py                          # defaults
+python portfolio/10_ddpm/train.py quick=true               # CI smoke
+python portfolio/10_ddpm/train.py trainer.max_epochs=20 diffusion.T=500
 
 # 2) Ablate.
 python portfolio/10_ddpm/ablate.py

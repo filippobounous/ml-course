@@ -12,26 +12,30 @@ subsequent week (Weeks 7–12). Lives in `src/mlcourse/trainer.py`.
 - **Checkpoint save / resume** with full RNG state round-trip — the demo
   verifies that reloading yields bit-identical model weights.
 - **Optional Weights & Biases logging** gated by `MLCOURSE_WANDB=1`.
-- **Hydra configs** in `src/mlcourse/configs/trainer.yaml`.
+- **Hydra configs** under `src/mlcourse/configs/` (the demo is a `@hydra.main`
+  entry point — every knob is overridable from the command line).
 
 ## Layout
 
 ```
 src/mlcourse/
-├── trainer.py              ← Trainer + TrainerConfig
+├── trainer.py                    ← Trainer + TrainerConfig
 └── configs/
-    └── trainer.yaml        ← default Hydra config
+    ├── trainer/default.yaml      ← base TrainerConfig (group default)
+    └── week06/trainer_demo.yaml  ← composes /trainer:default
 
 portfolio/06_trainer/
-├── demo.py                 ← end-to-end demo (toy regression)
+├── demo.py                       ← @hydra.main entry point
 └── README.md
 ```
 
 ## Reproduce
 
 ```bash
-python -m pip install -e ".[dl,dev]"
-python portfolio/06_trainer/demo.py
+python -m pip install -e ".[dl,ops]"
+python portfolio/06_trainer/demo.py                         # defaults
+python portfolio/06_trainer/demo.py trainer.max_epochs=1    # CI smoke
+python portfolio/06_trainer/demo.py trainer.lr=1e-3 data.batch_size=32
 ```
 
 If torch is not installed the script prints a friendly skip message and exits.

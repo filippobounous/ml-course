@@ -1,61 +1,62 @@
-"""End-to-end CIFAR-10 demo.
+"""End-to-end CIFAR-10 demo, driven by Hydra.
 
 Trains ResNet-18 from scratch for a handful of epochs, evaluates against a
 transfer-learning baseline, runs Grad-CAM on a handful of predictions, and
 sweeps FGSM epsilons to produce a robustness curve.
 
 Target runtime: 20–40 minutes on M-series (MPS), ≈ 2–3 hours on CPU.
-The CI-friendly `quick` mode does a 1-epoch run on a 5k subset for sanity.
+The CI-friendly quick mode does a 1-epoch run on a 5k subset for sanity.
+
+Hydra entry point — knobs:
+
+    python demo.py                                 # defaults from week07/cifar10.yaml
+    python demo.py quick=true                      # CI smoke (1 epoch, 5k subset)
+    python demo.py trainer.max_epochs=20 trainer.lr=0.05
 """
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
 
+import hydra
+from omegaconf import DictConfig
+
 HERE = Path(__file__).resolve().parent
+CONFIG_PATH = str(Path(__file__).resolve().parents[2] / "src" / "mlcourse" / "configs")
 
 
 def _fmt_row(name: str, loss: float, acc: float) -> str:
     return f"| {name} | {loss:.4f} | {acc:.4f} |"
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--batch-size", type=int, default=128)
-    parser.add_argument("--lr", type=float, default=1e-2)
-    parser.add_argument("--quick", action="store_true", help="1 epoch, subset data")
-    parser.add_argument("--data-root", type=str, default=str(HERE / "data"))
-    args = parser.parse_args()
-
+@hydra.main(version_base=None, config_path=CONFIG_PATH, config_name="week07/cifar10")
+def main(cfg: DictConfig) -> None:
     import torch
     from classifier import GradCAM, evaluate, fgsm, get_cifar10_loaders, resnet18_for_cifar
 
     from mlcourse.trainer import Trainer, TrainerConfig
     from mlcourse.utils import detect_device
 
-    device = detect_device()
+    device = cfg.trainer.device if cfg.trainer.device != "auto" else detect_device()
     print(f"device: {device}")
-    train_loader, test_loader = get_cifar10_loaders(args.data_root, args.batch_size)
+    train_loader, test_loader = get_cifar10_loaders(cfg.data.root, cfg.data.batch_size)
 
-    if args.quick:
-        # Subsample for a CI smoke check.
-        train_loader.dataset.data = train_loader.dataset.data[:5000]  # type: ignore[attr-defined]
-        train_loader.dataset.targets = train_loader.dataset.targets[:5000]  # type: ignore[attr-defined]
-        args.epochs = 1
+    epochs = cfg.trainer.max_epochs
+    if cfg.quick:
+        train_loader.dataset.data = train_loader.dataset.data[: cfg.data.quick_subset_size]  # type: ignore[attr-defined]
+        train_loader.dataset.targets = train_loader.dataset.targets[: cfg.data.quick_subset_size]  # type: ignore[attr-defined]
+        epochs = 1
 
-    # -- scratch ResNet-18 (via the Week-6 Trainer harness) -------------------
     model = resnet18_for_cifar()
     optimizer = torch.optim.SGD(
-        model.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4, nesterov=True
+        model.parameters(), lr=cfg.trainer.lr, momentum=0.9, weight_decay=5e-4, nesterov=True
     )
     trainer_cfg = TrainerConfig(
-        max_epochs=args.epochs,
-        lr=args.lr,
+        max_epochs=epochs,
+        lr=cfg.trainer.lr,
         device=device,
-        seed=0,
-        grad_clip_norm=1.0,
+        seed=cfg.trainer.seed,
+        grad_clip_norm=cfg.trainer.grad_clip_norm,
     )
     trainer = Trainer(trainer_cfg)
 
@@ -74,18 +75,15 @@ def main() -> None:
 
     scratch_loss, scratch_acc = evaluate(model, test_loader, device)
 
-    # -- Grad-CAM -------------------------------------------------------------
     print("\nRunning Grad-CAM on 8 test images...")
     x_batch, _y_batch = next(iter(test_loader))
     x_batch = x_batch[:8].to(device)
     with GradCAM(model, target_layer=model.layer4) as cam:
         heatmaps = torch.stack([cam(x_batch[i : i + 1]).cpu() for i in range(8)])
 
-    # -- FGSM sweep -----------------------------------------------------------
     print("\nFGSM epsilon sweep...")
-    epsilons = [0.0, 1 / 255, 2 / 255, 4 / 255, 8 / 255]
     fgsm_acc: list[tuple[float, float]] = []
-    for eps in epsilons:
+    for eps in cfg.eval.fgsm_epsilons:
         correct = 0
         total = 0
         for x, y in test_loader:
@@ -94,17 +92,16 @@ def main() -> None:
             with torch.no_grad():
                 correct += int((model(x_adv).argmax(1) == y).sum())
             total += y.size(0)
-            if total >= 1000:  # cap the sweep for speed
+            if total >= cfg.eval.fgsm_total_cap:
                 break
         acc = correct / total
         fgsm_acc.append((eps, acc))
         print(f"  eps={eps:.4f}  acc={acc:.4f}")
 
-    # -- Report ---------------------------------------------------------------
     lines = [
         "# Week 7 — CIFAR-10 classifier",
         "",
-        f"Device: `{device}` · epochs: `{args.epochs}` · batch: `{args.batch_size}` · lr: `{args.lr}`",
+        f"Device: `{device}` · epochs: `{epochs}` · batch: `{cfg.data.batch_size}` · lr: `{cfg.trainer.lr}`",
         "",
         "## Final accuracy",
         "",
@@ -123,7 +120,6 @@ def main() -> None:
     (HERE / "report.md").write_text("\n".join(lines), encoding="utf-8")
     print("\nwrote:", HERE / "report.md")
 
-    # Optional heat-map figure.
     try:
         import matplotlib
 

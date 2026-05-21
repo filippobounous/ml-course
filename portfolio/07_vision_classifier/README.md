@@ -9,17 +9,19 @@ conv block, and produce an **FGSM adversarial-robustness curve**.
   (3×3 stem + no maxpool, standard CIFAR recipe), `transfer_resnet18()`
   (ImageNet-pretrained feature extractor), `GradCAM`, `fgsm()`.
 - `demo.py` — end-to-end training **via `mlcourse.Trainer`** + Grad-CAM +
-  FGSM sweep. Runs in ~30 min on MPS, ~3 h on CPU. Use `--quick` for a
+  FGSM sweep. Runs in ~30 min on MPS, ~3 h on CPU. Use `quick=true` for a
   one-epoch smoke check. This is the first downstream week that consumes
   the Week-6 `Trainer` harness; `tests/week_07/test_slow_trainer_integration.py`
-  guards the integration.
+  guards the integration. Driven by Hydra: see
+  `src/mlcourse/configs/week07/cifar10.yaml`.
 
 ## Reproduce
 
 ```bash
 python -m pip install -e ".[dl,ops]"
-python portfolio/07_vision_classifier/demo.py              # full run
-python portfolio/07_vision_classifier/demo.py --quick      # CI smoke
+python portfolio/07_vision_classifier/demo.py              # defaults
+python portfolio/07_vision_classifier/demo.py quick=true   # CI smoke
+python portfolio/07_vision_classifier/demo.py trainer.max_epochs=20 trainer.lr=0.05
 ```
 
 First run downloads CIFAR-10 to `portfolio/07_vision_classifier/data/` (170 MB).
