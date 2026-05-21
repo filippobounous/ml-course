@@ -1,0 +1,15 @@
+# Default Trainer config. Compose with Hydra:
+#   python my_script.py --config-path ../../src/mlcourse/configs --config-name trainer
+#   python my_script.py trainer.lr=3e-4 trainer.max_epochs=20
+_target_: mlcourse.trainer.TrainerConfig
+max_epochs: 10
+lr: 0.001
+device: auto
+seed: 0
+deterministic: true
+grad_accum_steps: 1
+grad_clip_norm: null
+mixed_precision: false
+log_every_n_steps: 50
+checkpoint_dir: null
+extras: {}
