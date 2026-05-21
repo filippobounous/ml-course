@@ -100,6 +100,8 @@ Work the problem set in `../problems/README.md`. Build the micrograd engine in
 `src/mlcourse/autograd/`). Make sure your unit tests compare gradients both
 to numerical gradients and to `torch.autograd` for at least six small graphs.
 
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three concrete exercises (backward pass on `x*x*x` by hand showing why `+=` matters, Adam bias correction on a constant gradient with explicit step-by-step numerics, Glorot vs naive init variance propagation across a 5-layer net).
+
 ---
 
 ## Time budget (≈ 20 hr)
