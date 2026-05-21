@@ -91,3 +91,40 @@ ViT cuts an image into 16×16 patches, embeds each patch, adds positional encodi
 ## What to do with these notes
 
 Work the problem set in `../problems/README.md`. Implement manual 2-D convolution in NumPy (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/07_vision_classifier/`: CIFAR-10 ResNet-18 + transfer-learning baseline + Grad-CAM + FGSM.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three paper-doable exercises (conv backprop showing $\partial L / \partial W$ is itself a conv, receptive-field recursion on a 4-layer CNN, Grad-CAM on a synthetic 2-channel feature map).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1–2 Conv + arithmetic | 4 | im2col, padding/stride; derive backward pass; verify against torch on a tiny example. |
+| §3–4 ResNet + BN | 4 | Skip connections, bottleneck; BN math; the train/eval dual behaviour. |
+| §5 Transfer learning | 3 | Pretrained ImageNet backbone → frozen vs fine-tuned; the normalisation-constant footgun. |
+| §6 Grad-CAM | 2 | Implement on the last block of your trained ResNet-18; eyeball 8 correct + 8 incorrect predictions. |
+| §7 FGSM | 1 | Sweep $\varepsilon$ in $\{0, 1/255, 2/255, 4/255, 8/255\}$ and plot accuracy. |
+| Problem set + portfolio | 5 | ResNet-18 from scratch on CIFAR-10 via `mlcourse.Trainer`; ship the failure-mode analysis. |
+| Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 8, you should be able to answer "yes" to all of:
+
+1. Can I derive conv backprop and show that both $\partial L / \partial W$ and $\partial L / \partial X$ are themselves convolutions (with $G$ and the 180°-rotated kernel respectively)?
+2. Can I derive the receptive-field recursion $RF_\ell = RF_{\ell-1} + (k_\ell - 1) J_{\ell-1}$ and apply it to ResNet-18 by hand?
+3. Can I explain BatchNorm's math, why train and eval modes behave differently, and what breaks at batch size 1?
+4. Can I produce a Grad-CAM heatmap from scratch (pool gradients, weight feature maps, ReLU, upsample) and pick a sensible target layer?
+5. Can I run an FGSM sweep and interpret the accuracy-vs-$\varepsilon$ curve (where does it drop, what does that say about decision-boundary geometry)?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **Convolutional layers ↔ translation-equivariant linear maps on a lattice.** Weight-sharing across spatial positions is exactly imposing **discrete translation symmetry** ($T_a \circ W = W \circ T_a$). Pooling is a coarse-graining / RG-block-spin step that loses some translation symmetry in exchange for a doubled lattice spacing.
+- **Receptive field ↔ light cone / causal cone.** Layer depth × kernel stride determines how far an output cell can "see" — exactly the same recursion as the propagation of a signal through a discretised wave equation. Stride-2 layers are "step-2 light cones" in input-pixel time.
+- **BatchNorm ↔ thermal renormalisation.** BN rescales the per-layer activations to unit variance per batch, then learns an affine to recover the right scale — same idea as RG-rescaling fields by their fluctuation scale at each block-spin step. The running-mean / running-var at eval time is the "thermalised" expectation: train statistics ≈ batch microstate, eval statistics ≈ ensemble average.
+- **ResNet skip connections ↔ identity-channel propagator.** $y = x + F(x)$ at every block means the identity channel is *always* preserved through the network, so even with frozen $F$ the input can flow to the output unchanged. Same trick as adding the bare-propagator $G_0$ explicitly to a self-energy-corrected propagator $G = G_0 + G_0 \Sigma G_0 + \dots$ — preventing the network from forgetting the input is the network analogue of preserving the bare term.
+
+Keep these bridges live; W8 (attention as an all-to-all symmetric kernel) and W10 (diffusion as a denoising flow on a U-Net) reuse the lattice / propagator pictures.
