@@ -106,3 +106,41 @@ Work the problem set in `../problems/README.md`. The portfolio artifact is in
 `../../../portfolio/11_rl_agent/`: a CleanRL-style single-file PPO on a custom
 1-D physics / market-making environment, plus a torch-free ReAct-style tool-use
 agent with a deterministic eval harness.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three concrete exercises (Bellman contraction on a 3-state chain showing $\|V^{(k+1)} - V^{(k)}\|_\infty \le \gamma^k \cdot 10$, PPO clip geometry tables for $A > 0$ and $A < 0$, GAE on a 4-step rollout at $\lambda \in \{0, 0.95, 1\}$ showing the TD–MC interpolation).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 MDP + Bellman | 3 | Prove $\gamma$-contraction; run value iteration on a 5-state chain to convergence. |
+| §2 Policy gradient | 3 | Log-derivative trick; REINFORCE → actor–critic; the control-variate identity. |
+| §3 PPO | 4 | Clip geometry; "37 details" subset (obs/adv normalisation, LR anneal, value clip); CartPole. |
+| §4 GAE | 2 | Derive the $A_t = \delta_t + \gamma \lambda A_{t+1}$ recursion; bias–variance interpolation. |
+| §5 Custom env + PPO portfolio | 4 | Ship `portfolio/11_rl_agent/market_env.py` + `ppo.py`; training curves. |
+| §6 ReAct agents | 3 | Tool-use loop; deterministic eval harness on 20 curated tasks. |
+| Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 12, you should be able to answer "yes" to all of:
+
+1. Can I prove the Bellman optimality operator $T^\star$ is a $\gamma$-contraction in sup-norm, and conclude value iteration converges geometrically?
+2. Can I derive the policy-gradient theorem from $J(\theta) = \mathbb{E}_\tau[R(\tau)]$ via the log-derivative trick, and explain why subtracting a baseline $V^\pi(s)$ reduces variance without introducing bias?
+3. Can I analyse PPO's clipped objective and explain precisely when the clip activates for $A > 0$ vs $A < 0$ (and why it bounds policy KL implicitly)?
+4. Can I derive $A_t^{(\lambda)} = \sum_k (\gamma\lambda)^k \delta_{t+k}$ and explain its bias–variance interpolation between TD ($\lambda = 0$) and MC ($\lambda = 1$)?
+5. Can I build a custom gymnasium environment, train PPO on it with the "37 details" subset (obs/adv normalisation, value clipping, LR anneal), and report training curves?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **Bellman equation ↔ Hamilton–Jacobi–Bellman (HJB).** In the continuous-time limit, the discrete Bellman update $V(s) = \max_a [r(s, a) + \gamma \mathbb{E} V(s')]$ becomes the HJB PDE $\partial_t V + \max_a [\mathcal{L}^a V + r] = 0$ — the optimal-control analogue of Hamilton's classical-mechanics equation. The discount $\gamma = e^{-\rho \Delta t}$ corresponds to a continuous discount rate $\rho$.
+- **Value iteration ↔ Lax–Friedrichs / backward Euler sweep.** Value iteration is a backward-time numerical solver for HJB on a discrete grid: it propagates information from the terminal state backwards. The $\gamma$-contraction is the discrete-time analogue of a CFL stability condition on the integrator.
+- **Policy gradient ↔ likelihood-ratio derivative on stochastic trajectories.** The log-derivative trick $\nabla \mathbb{E}_\pi[R] = \mathbb{E}_\pi[R \cdot \nabla \log \pi]$ is identical to the REINFORCE-style gradient used in stochastic mechanics / Onsager response theory. The advantage baseline is a control variate — same idea as subtracting an analytic mean from a Monte Carlo estimator.
+- **PPO clip ↔ trust-region constraint.** The clip is a soft analogue of the explicit KL-trust-region constraint $D_\text{KL}(\pi_\theta \| \pi_\text{old}) \le \delta$ (TRPO). Geometrically it's a *barrier function* on the importance-sampling ratio — the same trick as keeping a Metropolis–Hastings proposal close to the current state to maintain detailed balance.
+- **GAE ↔ exponentially-weighted multi-step estimator.** $A_t^{(\lambda)} = \sum_k (\gamma\lambda)^k \delta_{t+k}$ is a low-pass filter on the TD-residual sequence, with $\lambda$ playing the role of a smoothing time-constant. Same Wiener-filter ancestry as exponential-moving-average covariance estimators in finance.
+
+Keep these bridges live; W12 (PINN ≡ functional-gradient descent on a PDE residual) extends the HJB / value-function lens explicitly.
