@@ -9,32 +9,50 @@ honest DDPM-vs-DDIM step-count ablation.
   loss, DDPM and DDIM samplers (eta≥0 supported).
 - `train.py` — full training loop (10 epochs → plausible samples on MPS in
   ~2 hours). Saves `checkpoint.pt` and a `samples.png` grid.
+- `fid.py` — **Fréchet Inception Distance** implementation: InceptionV3
+  pool3 features (greyscale-repeated and bilinear-upsampled to
+  $3 \times 299 \times 299$), Gaussian-fit per set, Heusel-2017
+  closed-form FID. The FID math (`statistics`, `frechet_distance`) is
+  pluggable — pass any feature extractor that returns a $(N, D)$ array.
 - `ablate.py` — runs DDPM (1000) and DDIM η=0 at {10, 20, 50, 100} steps
-  from the trained checkpoint; reports a proxy quality metric
-  (pixel-statistics distance to the FashionMNIST test set) and a sample
-  grid across samplers.
+  from the trained checkpoint; reports **both FID and the pixel-stat proxy**
+  side-by-side, plus a sample grid. Use `--no-fid` to skip the
+  InceptionV3 download for a quick smoke check.
 
 ## Reproduce
 
 ```bash
 python -m pip install -e ".[dl,diffusion,ops]"
 
-# 1) Train.
-python portfolio/10_ddpm/train.py             # full run
-python portfolio/10_ddpm/train.py --quick     # CI smoke
+# 1) Train (Hydra entry point — see src/mlcourse/configs/week10/ddpm.yaml).
+python portfolio/10_ddpm/train.py                          # defaults
+python portfolio/10_ddpm/train.py quick=true               # CI smoke
+python portfolio/10_ddpm/train.py trainer.max_epochs=20 diffusion.T=500
 
-# 2) Ablate.
+# 2) Ablate (FID + pixel-stat).
 python portfolio/10_ddpm/ablate.py
+python portfolio/10_ddpm/ablate.py --no-fid                # skip InceptionV3
 ```
 
-## Note on the quality metric
+First FID run downloads ~100 MB of pretrained InceptionV3 weights to the
+torchvision cache; subsequent runs reuse them.
 
-Full FID needs an InceptionV3 checkpoint and pipeline that are overkill for
-a coursework artifact. Pixel-statistics distance (L2 on mean + L2 on std,
-per pixel) tracks FID qualitatively on FashionMNIST at the sample counts
-we have compute for — and is trivial to audit.
+## Quality metrics
 
-Adding FID via `pytorch-fid` is a one-line swap once the baseline works.
+Two metrics, side-by-side:
+
+- **FID** (Heusel 2017): Fréchet distance between Gaussians fit to
+  InceptionV3 pool3 features of generated vs real samples. The
+  industry-standard image-generation metric; numerical-sensitive
+  matrix square root via `scipy.linalg.sqrtm`.
+- **Pixel-stat distance**: $\|\mu_g - \mu_r\|_2 + \|\sigma_g - \sigma_r\|_2$
+  over per-pixel mean and std. Cheap, no extra dependencies, tracks FID
+  qualitatively on FashionMNIST — useful as a sanity check when you
+  can't afford the Inception forward pass.
+
+Both should rank the samplers in the same order; if they disagree,
+trust FID and read the disagreement as a signal that the proxy is
+hitting its limits on this image distribution.
 
 ## Expected ablation behaviour
 
@@ -68,6 +86,10 @@ tok = open_clip.get_tokenizer("ViT-B-32")
 - DDIM deterministic behaviour (two runs with same seed → identical samples).
 - InfoNCE loss (identity embeddings recover the theoretical minimum).
 - Torch-gated UNet forward pass + DDPM loss shape check.
+- **FID math** (`test_fid.py`): identical-Gaussian distance = 0, symmetry,
+  monotonicity in noise scale, channel-adapter accepts greyscale and
+  rejects unsupported channel counts. A slow-marked test exercises the
+  real InceptionV3 pipeline end-to-end.
 
 ## What I learned
 

@@ -81,3 +81,40 @@ Key metric: **Brier score** $\frac{1}{N} \sum_i (\hat p_i - y_i)^2$; decomposes 
 ## What to do with these notes
 
 Work the problem set in `../problems/README.md`. Implement IRLS logistic regression (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/03_tabular_benchmark/`: logistic / random forest / XGBoost / LightGBM on Covertype with full ROC/PR and calibration reporting.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three numerical exercises (one IRLS Newton step on a 3-point problem, SVM dual closed-form on three points, Gini vs entropy vs XGBoost second-order gain on a tiny split).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 Logistic + IRLS | 4 | Prove NLL convexity; derive IRLS by hand; implement Newton in NumPy. |
+| §2 SVMs | 4 | Primal → dual derivation; KKT slackness; kernel trick on a Gram-matrix toy. |
+| §3 Trees + ensembles | 4 | Gini / entropy splits on toy data; XGBoost second-order gain formula. |
+| §4 Calibration | 2 | Brier decomposition; isotonic vs Platt scaling. |
+| §5 Class imbalance | 1 | AUC-PR vs ROC on an imbalanced toy set. |
+| Problem set + benchmark | 4 | IRLS implementation + XGBoost vs LightGBM benchmark on UCI Adult. |
+| Office hours / review | 1 | Check proofs against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 4, you should be able to answer "yes" to all of:
+
+1. Can I derive the IRLS Newton update for logistic regression from $\nabla^2 L = X^\top W X$, and verify NLL convexity?
+2. Can I derive the soft-margin SVM dual from the primal Lagrangian and interpret the KKT complementary slackness in terms of margin / on-margin / inside-margin support vectors?
+3. Can I compute information gain and Gini gain for a binary split and explain why they typically pick the same split?
+4. Can I derive XGBoost's second-order split-gain formula from the functional-gradient view of boosting?
+5. Can I produce a calibration curve, decompose the Brier score into calibration + resolution + uncertainty, and explain when to use isotonic regression vs Platt scaling?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **SVM dual ↔ Lagrangian mechanics with inequality constraints.** The KKT conditions are exactly the constrained-extremum conditions: stationarity (Euler–Lagrange), primal feasibility (the constraint), dual feasibility ($\alpha_i \ge 0$ — Lagrange multipliers non-negative for inequality constraints), complementary slackness ($\alpha_i \cdot \text{constraint}_i = 0$ — multipliers only "fire" on active constraints). The slackness is the discrete-time analogue of a contact constraint going active/inactive in rigid-body dynamics.
+- **Kernel trick ↔ working in a different basis on a Hilbert space.** A positive-definite kernel $K(x, x') = \langle \phi(x), \phi(x') \rangle_\mathcal{H}$ implicitly maps to a (possibly infinite-dimensional) feature space $\mathcal{H}$. RBF kernels lift to $\mathcal{H} = $ a Sobolev-like RKHS. Same construction physicists use for Green's-function methods: never write the basis explicitly; just compute pairwise inner products.
+- **Calibration ↔ thermal equilibrium of a binary observable.** A calibrated classifier emits probabilities that match empirical frequencies in the long run — exactly the condition that the binary observable be in thermal equilibrium with the data generator. Miscalibration is a free-energy gap.
+- **Gradient boosting ↔ functional gradient descent on $L^2$.** Boosting iteratively descends on the empirical-risk *functional* in $L^2(\text{data manifold})$: at each step you add the function (a tree) that best approximates the functional gradient. XGBoost's second-order Taylor expansion is Newton's method in function space — the same idea as Hartree–Fock SCF in quantum chemistry (functional gradient + curvature on a one-particle space).
+
+Keep these bridges live; W5 (autograd / backprop ≡ adjoint method) and W12 (PINN via functional gradient on the residual) reuse the "gradient descent on a function space" pattern explicitly.

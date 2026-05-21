@@ -109,8 +109,7 @@ def test_matches_torch_on_mlp_forward_and_backward():
 
     # Our MLP with fixed weights.
     mlp = MLP(n_in=3, n_outs=[4, 1], seed=42)
-    # Build equivalent torch model manually.
-    tw1 = torch.tensor([n.w for n in mlp.layers[0].neurons]).float()
+    # Build equivalent torch model manually from our Value-typed weights.
     tw1 = torch.tensor([[w.data for w in n.w] for n in mlp.layers[0].neurons], requires_grad=True)
     tb1 = torch.tensor([n.b.data for n in mlp.layers[0].neurons], requires_grad=True)
     tw2 = torch.tensor([[w.data for w in n.w] for n in mlp.layers[1].neurons], requires_grad=True)

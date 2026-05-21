@@ -1,5 +1,8 @@
 # ML/AI Course — for Quantitative Minds
 
+[![CI](https://github.com/filippobounous/ml-course/actions/workflows/ci.yml/badge.svg)](https://github.com/filippobounous/ml-course/actions/workflows/ci.yml)
+![coverage](https://img.shields.io/badge/coverage-artifact-blue?logo=codecov) ![python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?logo=python)
+
 A 12-week, ~20 hr/week intensive course that takes a quantitatively-literate learner
 (theoretical physics, maths, or equivalent) from **tutorial-level ML** to **research-grade
 fluency** in modern machine learning, deep learning, LLMs, diffusion, RL, and their
@@ -45,6 +48,7 @@ attaching the resulting log / figure to `portfolio/<artifact>/verified.md`.
 
 ## Start here
 
+- **How to work through it:** [`STUDY_GUIDE.md`](STUDY_GUIDE.md) — weekly rhythm, suggested order, how to check yourself, wave/week mapping.
 - **Read the syllabus:** [`SYLLABUS.md`](SYLLABUS.md) — week-by-week plan, readings, problem sets, artifacts.
 - **Browse the portfolio:** [`PORTFOLIO.md`](PORTFOLIO.md) — what you will ship and how to present it.
 - **Known gaps:** [`TODO.md`](TODO.md) — review-surfaced issues not yet closed.
@@ -112,6 +116,19 @@ docker compose up --build jupyter
 # http://localhost:8888  (token set in docker-compose.yml)
 ```
 
+### Option C — Full dev Docker image (CPU torch + every extra)
+
+Preinstalled: base + dev + dl (CPU wheels) + llm + diffusion + rl + sciml + ops.
+Useful when you want every artifact runnable without fighting platform wheels.
+
+```bash
+make docker-dev              # build
+make docker-dev-shell        # drop into /work
+make docker-dev-test         # pytest --run-slow inside the container
+```
+
+Not for MPS — the course's MPS path is native (`scripts/bootstrap_macos.sh`).
+
 ### Installing the per-week dependency groups
 
 Each week has its own optional-dependency group. Install them as you progress, so you
@@ -141,7 +158,14 @@ make format       # ruff format + fix
 make lint         # ruff + mypy
 make test         # pytest (all weeks)
 make test-week-N  # pytest just week N's problem set
+make docs         # build the mkdocs site into ./site/ (after `make install-docs`)
+make docs-serve   # live-reload dev server on http://127.0.0.1:8000
 ```
+
+The site is auto-deployed to GitHub Pages on every push to `main` via
+`.github/workflows/docs.yml`. The single source of truth is the markdown
+under `modules/`, `portfolio/`, and the repo root — `scripts/build_docs.py`
+symlinks those files into a (gitignored) `docs/` tree before each build.
 
 ## Repo layout
 

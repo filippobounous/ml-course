@@ -106,3 +106,41 @@ Mitchell et al. (2019) and Gebru et al. (2018) describe the minimum docs every m
 Work the problem set in `../problems/README.md`. The portfolio artifact this
 week is in `../../../portfolio/09_dpo_tinyllama/`: SFT + DPO on
 TinyLlama-1.1B-Chat via TRL or MLX + eval harness + model card + Gradio demo.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three concrete exercises (DPO loss on a single preference pair with explicit gradient signs, LoRA parameter count for a 7B model, Chinchilla compute-optimal budget across three model sizes).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 RLHF + DPO | 4 | Derive DPO from the RL objective; trace the $\log Z(x)$ cancellation. |
+| §2 LoRA + PEFT | 3 | Parameter-count derivation; ablate $r \in \{4, 8, 16, 32\}$ on a toy task. |
+| §3 Scaling laws | 2 | Kaplan vs Chinchilla; compute-vs-loss exponents on a TinyLlama-scale sweep. |
+| §4 MLX vs TRL pipelines | 3 | Run the same SFT/DPO recipe both ways; profile throughput. |
+| §5 Eval harness | 3 | Curate 20–30 prompts; LLM-as-judge with explicit ordinal-only caveat. |
+| Portfolio + Gradio + model card | 4 | Ship `portfolio/09_dpo_tinyllama/` + a Space (guarded by `HF_LOGIN=1`). |
+| Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 10, you should be able to answer "yes" to all of:
+
+1. Can I derive the DPO loss from the RLHF objective and explain why the $\log Z(x)$ term cancels under Bradley–Terry preferences?
+2. Can I compute LoRA's trainable parameter count for a given $(d_\text{in}, d_\text{out}, r)$ and explain why mergeable inference has zero overhead?
+3. Can I state Chinchilla's $D^\star \approx 20 N^\star$ rule and compute the optimal token budget for a target parameter count?
+4. Can I build a 20–30 prompt evaluation harness with LLM-as-judge scoring and explain why those numbers are ordinal, not cardinal?
+5. Can I write a `huggingface_hub.ModelCard` with the minimum required sections (intended use, not-intended use, evaluation on subpopulations, known failure modes)?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **RLHF objective ↔ canonical ensemble with reward as energy.** The unconstrained optimum is $\pi^\star(y | x) \propto \pi_\text{ref}(y | x) \cdot e^{r(x, y) / \beta}$ — exactly a Gibbs measure at inverse temperature $\beta^{-1}$ with the reference policy as the "free" measure and the reward as $-E$. DPO trains the policy to **match this Gibbs structure** directly, bypassing the explicit reward model. The KL penalty is the entropy term $-T S$ in the free energy $F = E - TS$.
+- **DPO ↔ Onsager-type response on log-odds.** The Bradley–Terry $\sigma(r_w - r_l)$ is a *fluctuation-dissipation*-style relation: probability of preference equals sigmoid of the energy gap. DPO's gradient lifts the log-ratio of the chosen completion *and* depresses the rejected one — same as driving two coupled susceptibilities in opposite directions.
+- **LoRA ↔ low-rank perturbation theory.** $W \to W + BA$ with $r \ll d$ is exactly a rank-$r$ perturbation of a linear operator; on a transformer layer it's an effective sub-space approximation of the parameter-space tangent direction. Same algebra as a low-rank update to a Hamiltonian (subspace expansion in DMRG).
+- **Scaling laws ↔ critical exponents.** $L(C) \propto C^{-\alpha}$ with $\alpha \in (0.3, 0.5)$ — clean power laws spanning many orders of magnitude in compute, just like correlation lengths near a phase transition. Chinchilla's $D \propto N$ is the analogue of a *scaling relation* between two thermodynamic variables.
+- **LLM-as-judge ↔ Ising-style ordinal observable.** The judge produces a sign (or a 0–10), not a physically calibrated cardinal scale. Pairwise win-rates form an antisymmetric matrix whose dominant eigenvector is the implicit ranking — same trick as extracting magnetisation from a fluctuating Ising-spin sample.
+
+Keep these bridges live; W10 (diffusion ≡ reverse Langevin), W11 (RL ≡ HJB), and W12 (PINN ≡ variational PDE residual) all reuse the canonical-ensemble / free-energy lens.

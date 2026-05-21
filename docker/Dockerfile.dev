@@ -1,0 +1,52 @@
+# Development image with the full ML stack pre-installed.
+#
+# Reproducible env for every artifact in the repo without wrestling with
+# per-platform wheel quirks. Not intended for MPS (the image is linux/amd64
+# or linux/arm64 via qemu, not Apple Silicon metal). For MPS, install the
+# extras natively via `scripts/bootstrap_macos.sh`.
+#
+# Build:  make docker-dev        (or: docker compose -f docker-compose.dev.yml build dev)
+# Shell:  make docker-dev-shell  (drops into /work with the repo mounted)
+# Tests:  make docker-dev-test   (runs pytest --run-slow)
+
+FROM python:3.11-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# System deps: git (for editable installs of HF datasets scripts),
+# build-essential (for sklearn/scipy wheels when prebuilt isn't available),
+# libgomp1 (xgboost/lightgbm), tini (clean signal forwarding).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        build-essential \
+        libgomp1 \
+        tini \
+        ca-certificates \
+      && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /work
+
+# Install torch from the CPU wheels index first so the rest of the extras
+# don't try to pull a CUDA build.
+RUN python -m pip install -U pip && \
+    python -m pip install --index-url https://download.pytorch.org/whl/cpu \
+        "torch>=2.3" "torchvision>=0.18" "torchaudio>=2.3"
+
+# Copy only what pyproject.toml needs for the editable install — keeps the
+# layer cache warm when source files change.
+COPY pyproject.toml README.md /work/
+COPY src/ /work/src/
+
+# Base dev deps, then the per-week optional groups (without dl: already installed above).
+RUN python -m pip install -e ".[dev,llm,diffusion,rl,sciml,ops]"
+
+# Copy the rest of the repo; `docker-compose.dev.yml` bind-mounts over this
+# for interactive development. In a standalone build the image ships with
+# the current snapshot of the tree.
+COPY . /work/
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["bash"]

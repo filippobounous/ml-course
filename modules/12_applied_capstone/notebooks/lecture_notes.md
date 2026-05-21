@@ -93,3 +93,43 @@ least one configuration the paper didn't ablate, and report it honestly.
 Work the problem set in `../problems/README.md`. Build the capstone in
 `../../../portfolio/12_capstone/` (primary track) and the bonus paper
 reproduction under `portfolio/12_capstone/paper_reproduction/`.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three concrete exercises (PINN residual via PyTorch autograd with the `create_graph=True` pattern, walk-forward split with explicit 5-day purging + embargo, selection-bias Sharpe inflation showing $\rho^\star \sim \sqrt{2\log K / T}$).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| Paper-repro plan | 1 | One-page `PLAN.md` for the chosen paper (LoRA / DDPM / PPO / PINN). |
+| **Track A** PINN | 6 | Burgers' setup; PINN loss; GradNorm reweighting; train to $L^2 \le 10^{-2}$. |
+| **Track A** adjoint method | 2 | Pontryagin sketch; run `torchdiffeq.odeint_adjoint`. |
+| **Track B** walk-forward | 6 | Embargo + purging; PCA stat-arb residuals; honest Sharpe vs leakage. |
+| **Track B** backtest hygiene | 2 | Transaction-cost-aware Sharpe / turnover / drawdown. |
+| Capstone write-up | 3 | Final figures, honest reporting, model card. |
+| Paper reproduction | 2 | Execute the PLAN; commit one extra ablation beyond the paper. |
+
+(Pick Track A *or* Track B for the primary capstone; the paper-reproduction sub-artifact is required either way.)
+
+## Self-assessment rubric
+
+Before declaring the course complete, you should be able to answer "yes" to all of:
+
+1. **(Track A)** Can I derive the full PINN loss for the heat equation and explain why fixed loss weights $(1, 1, 1)$ underweight the boundary terms?
+2. **(Track A)** Can I sketch the adjoint-method correctness proof (Pontryagin / Lagrange multipliers) and explain its $\mathcal{O}(1)$-memory advantage over backprop-through-solver?
+3. **(Track B)** Can I implement walk-forward splits with embargo + purging and verify they have no temporal leakage via a synthetic-noise selection-bias demonstration?
+4. **(Track B)** Can I produce a transaction-cost-aware backtest report (net Sharpe, turnover, drawdown) and explain why high turnover degrades gross-to-net Sharpe roughly proportionally?
+5. **(Both)** Can I write a one-page paper-reproduction `PLAN.md`, execute the chosen figure or table at tiny scale, and add **at least one** extra ablation configuration the paper didn't run?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **PINN ↔ weak / variational formulation of a PDE.** Minimising the squared residual $\int |R[u_\theta]|^2 \, d\mu$ over a discrete sample is a Galerkin-style weak formulation — same idea as the finite-element method, but with neural-net trial functions instead of piecewise polynomials. Loss weighting via NTK is the analogue of choosing a metric on the space of test functions.
+- **Neural-ODE adjoint ↔ Pontryagin maximum principle.** The adjoint state $a(t) = \partial L / \partial h(t)$ is precisely the **costate** in optimal-control theory; the backward ODE $\dot a = -a^\top \partial f / \partial h$ is the Hamiltonian adjoint equation. The "free lunch" of $\mathcal{O}(1)$ memory comes from integrating both equations together — same trick used in time-reversible classical-mechanics solvers.
+- **Burgers' equation ↔ inviscid limit ↔ shock formation.** As viscosity $\nu \to 0$ in $u_t + u u_x = \nu u_{xx}$, smooth initial data forms shocks in finite time. The Cole–Hopf transformation linearises Burgers' into the heat equation — the same trick as the Bäcklund transformations in soliton theory. Your PINN should reproduce the shock structure; if it blurs it, the residual weighting is wrong.
+- **Selection bias ↔ Berkson's paradox / multiple-comparisons inflation.** Picking the best of $K$ noisy estimators inflates the apparent effect by $\sqrt{2 \log K / T}$ — same combinatorial inflation as the maximum of $K$ independent Gaussians (extreme-value theory). The cure is **pre-registration** (decide the rule before looking) — exactly what a particle-physics blinded analysis does for the same reason.
+- **Walk-forward embargo ↔ retarded propagator / causality on the time arrow.** The embargo zone is the analogue of a coherence time after which residual autocorrelations decay; sampling outside the embargo is sampling outside the (residual) light cone of the validation set.
+
+Diffusion (W10), RL (W11), and PINN / stat-arb (W12) all rest on the same continuous-time stochastic / control-theoretic toolkit. The hardest part of the course is also where the physics analogies pay off most.

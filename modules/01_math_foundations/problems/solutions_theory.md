@@ -25,7 +25,21 @@ using cyclic property of trace and $V^\top V = I$.
 
 ### (c) Eckart–Young
 
-Let $A_k = \sum_{i=1}^k \sigma_i u_i v_i^\top$. For any rank-$k$ matrix $B$, write $B = \sum_{i=1}^k x_i y_i^\top$ and apply Courant–Fischer: the best rank-$k$ approximation in Frobenius (and operator) norm has error $\|A - A_k\|_F^2 = \sum_{i=k+1}^r \sigma_i^2$. The full argument goes via interlacing of singular values; see Strang §1.8.
+Let $A_k = \sum_{i=1}^k \sigma_i u_i v_i^\top$ be the truncated SVD. Claim: for any matrix $B$ of rank $\le k$,
+
+$$\|A - A_k\|_F^2 \le \|A - B\|_F^2.$$
+
+**Proof sketch.** Let $B = X Y^\top$ with $X \in \mathbb{R}^{m \times k}$, $Y \in \mathbb{R}^{n \times k}$ (rank-$k$ factorisation). By the Courant–Fischer min-max characterisation of singular values:
+
+$$\sigma_{k+1}(A) = \min_{\dim S = m - k} \max_{x \in S, \|x\|=1} \|A x\|.$$
+
+Apply this with $S = \mathcal{N}(X^\top)$, which has dimension $\ge m - k$. Any $x \in S$ satisfies $B^\top x = Y X^\top x = 0$, so $\|A - B\|_2 \ge \|(A-B)x\| = \|Ax\|$, giving $\|A - B\|_2 \ge \sigma_{k+1}(A)$.
+
+A Weyl-style interlacing argument (singular values of $A$ vs of $A - B$) then upgrades the operator-norm bound to the Frobenius bound
+
+$$\|A - B\|_F^2 \ge \sum_{i=k+1}^r \sigma_i(A)^2 = \|A - A_k\|_F^2.$$
+
+Equality holds at $B = A_k$. See Strang §1.8 or Horn–Johnson Thm. 7.4.9.1 for the interlacing details.
 
 ## 2. KL properties
 
@@ -43,12 +57,34 @@ $f(x) = \log \sum_i e^{x_i}$. Gradient: $\nabla f = p$ where $p_i = e^{x_i} / \s
 
 ## 4. Gradient-descent convergence for $L$-smooth convex $f$
 
-$L$-smoothness means $f(y) \le f(x) + \nabla f(x)^\top (y-x) + \tfrac{L}{2}\|y-x\|^2$. With step $\eta = 1/L$, $x_{t+1} = x_t - \eta \nabla f(x_t)$. Plugging $y = x_{t+1}$:
+$L$-smoothness: $f(y) \le f(x) + \nabla f(x)^\top (y-x) + \tfrac{L}{2}\|y-x\|^2$. With step $\eta = 1/L$ and $x_{t+1} = x_t - \eta \nabla f(x_t)$, plug $y = x_{t+1}$:
 
-$f(x_{t+1}) \le f(x_t) - \tfrac{1}{2L}\|\nabla f(x_t)\|^2.$
+$$f(x_{t+1}) \le f(x_t) - \tfrac{1}{2L}\|\nabla f(x_t)\|^2. \quad (\star)$$
 
-Summing over $t = 0, \dots, T-1$: $\sum_t \|\nabla f(x_t)\|^2 \le 2L(f(x_0) - f(x_T))$. Then by convexity $f(x_t) - f^\star \le \nabla f(x_t)^\top (x_t - x^\star)$ and Cauchy–Schwarz + a telescoping argument (Nesterov Lemma 1.2.3, or Bubeck §3.2) yields
+So the loss is monotone decreasing — call this **descent**.
 
-$$f(x_T) - f^\star \le \frac{L\|x_0 - x^\star\|^2}{2T}.$$
+**Step 1. Distance to optimum is non-increasing.** Expanding $\|x_{t+1} - x^\star\|^2$ and using convexity $\nabla f(x_t)^\top (x_t - x^\star) \ge f(x_t) - f^\star$:
 
-The rate is $\mathcal{O}(1/T)$ for smooth-convex. Add $\mu$-strong convexity to get the exponential improvement $(1 - \mu/L)^T$.
+$$\|x_{t+1} - x^\star\|^2 = \|x_t - x^\star\|^2 - \tfrac{2}{L}\nabla f(x_t)^\top (x_t - x^\star) + \tfrac{1}{L^2}\|\nabla f(x_t)\|^2.$$
+
+Combine with $(\star)$ rewritten as $\tfrac{1}{L^2}\|\nabla f(x_t)\|^2 \le \tfrac{2}{L}(f(x_t) - f(x_{t+1}))$:
+
+$$\|x_{t+1} - x^\star\|^2 \le \|x_t - x^\star\|^2 - \tfrac{2}{L}(f(x_{t+1}) - f^\star).$$
+
+In particular $\|x_T - x^\star\| \le \|x_0 - x^\star\|$ — distance to optimum never grows.
+
+**Step 2. Telescope.** Sum the above for $t = 0, \dots, T-1$:
+
+$$\tfrac{2}{L} \sum_{t=1}^T (f(x_t) - f^\star) \le \|x_0 - x^\star\|^2 - \|x_T - x^\star\|^2 \le \|x_0 - x^\star\|^2.$$
+
+By descent ($(\star)$ ⟹ $f(x_t)$ non-increasing), $f(x_T) - f^\star \le \tfrac{1}{T} \sum_{t=1}^T (f(x_t) - f^\star)$. Therefore
+
+$$f(x_T) - f^\star \le \tfrac{L \|x_0 - x^\star\|^2}{2T}.$$
+
+Rate is $\mathcal{O}(1/T)$ for smooth-convex.
+
+**Adding strong convexity.** $\mu$-strong convexity strengthens convexity to $f(x) \ge f(x^\star) + \tfrac{\mu}{2}\|x - x^\star\|^2$ (the quadratic lower bound). Repeating Step 1 with this strengthening gives a *contraction* on $\|x_t - x^\star\|^2$:
+
+$$\|x_{t+1} - x^\star\|^2 \le (1 - \mu/L) \|x_t - x^\star\|^2,$$
+
+iterating to $\|x_T - x^\star\|^2 \le (1 - \mu/L)^T \|x_0 - x^\star\|^2$, hence $f(x_T) - f^\star \le \tfrac{L}{2}(1 - \mu/L)^T \|x_0 - x^\star\|^2$ — **linear convergence**, the exponential improvement. The ratio $\kappa = L/\mu$ is the **condition number** and controls how aggressive a step you can take.

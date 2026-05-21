@@ -6,6 +6,7 @@ on:
   pull_request:
 
 jobs:
+  # Fast gate: base install, runs on every push / PR. Must stay green.
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -35,6 +36,69 @@ jobs:
         run: |
           mypy src
 
-      - name: Tests (pytest)
+      - name: Tests (pytest + coverage)
         run: |
-          pytest
+          pytest --cov=src/mlcourse --cov-report=xml --cov-report=term
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn
+          retention-days: 30
+
+  # Docs build sanity-check on every PR. Strict mode catches broken nav
+  # links + missing files before they land on main, where the
+  # `docs.yml` workflow deploys to GitHub Pages.
+  docs-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install docs deps
+        run: |
+          python -m pip install -U pip
+          python -m pip install -e ".[docs]"
+
+      - name: Stage + build mkdocs site (strict)
+        run: |
+          python scripts/build_docs.py --no-build
+          mkdocs build --strict --site-dir site
+
+  # Slow integration gate: installs the DL + ops extras and runs the
+  # `@pytest.mark.slow` tier. Exercises torch-gated shape checks and the
+  # example W5 micrograd-on-two-moons integration. Kept CPU-only (no GPU
+  # runner on the free tier).
+  test-dl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies (base + dl + ops)
+        run: |
+          python -m pip install -U pip
+          # Install torch from PyPI. The PyPI wheel ships CUDA libs we don't
+          # use on a CPU runner, but it adds <2 GB and Just Works — much
+          # more reliable than `--index-url https://download.pytorch.org/whl/cpu`,
+          # which has surfaced 403 / empty-index failures on Actions runners.
+          # If runner-disk pressure ever bites, switch back with retry logic.
+          python -m pip install "torch>=2.3" "torchvision>=0.18" "torchaudio>=2.3"
+          python -m pip install -e ".[dev,ops]"
+
+      - name: Tests (pytest + --run-slow)
+        run: |
+          pytest --run-slow -q

@@ -1,0 +1,18 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    image: mlcourse-dev
+    # Mount the repo over /work so edits are live.
+    volumes:
+      - .:/work
+      # Persist the pip / HF / torch caches across runs.
+      - mlcourse-cache:/root/.cache
+    environment:
+      - PYTHONPATH=/work
+      - HF_HOME=/root/.cache/huggingface
+    working_dir: /work
+
+volumes:
+  mlcourse-cache:

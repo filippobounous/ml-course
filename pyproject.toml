@@ -32,6 +32,13 @@ dev = [
   "types-PyYAML>=6.0.12",
 ]
 
+# Documentation site (mkdocs-material) — used by the GitHub Pages build.
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5",
+  "pymdown-extensions>=10.0",
+]
+
 # Core deep-learning stack (W5 autograd onwards, W6 PyTorch, W7 CNNs)
 dl = [
   "torch>=2.3",
@@ -89,7 +96,6 @@ ops = [
   "wandb>=0.17",
   "xgboost>=2.1",
   "lightgbm>=4.5",
-  "pytorch-grad-cam>=1.5",
   "gradio>=4.40",
 ]
 
@@ -124,6 +130,23 @@ addopts = "-q"
 testpaths = ["tests"]
 markers = [
   "slow: long-running integration tests that train a real model (use --run-slow to include)",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src/mlcourse"]
+omit = [
+  "src/mlcourse/configs/*",  # Hydra configs have no runtime code
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
 ]
 
 [tool.mypy]

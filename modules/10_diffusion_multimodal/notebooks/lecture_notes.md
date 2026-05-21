@@ -90,6 +90,8 @@ in `../../../portfolio/10_ddpm/`: UNet-DDPM on FashionMNIST, DDPM-vs-DDIM
 ablation (step count vs sample quality), classifier-free guidance,
 CLIP zero-shot retrieval demo.
 
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three numerical exercises (forward-noise-schedule $\bar\alpha_t$ table across $t = 1, 100, 500, 1000$; DDIM $\eta = 0$ bit-identity verification; CFG arithmetic with the $\tilde\epsilon = (1+w)\epsilon_\text{cond} - w\epsilon_\text{uncond}$ derivation from tempered score).
+
 ---
 
 ## Time budget (≈ 20 hr)
