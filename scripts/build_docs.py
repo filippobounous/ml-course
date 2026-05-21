@@ -41,6 +41,7 @@ _add("README.md", "README.md")
 _add("STUDY_GUIDE.md", "STUDY_GUIDE.md")
 _add("SYLLABUS.md", "SYLLABUS.md")
 _add("PORTFOLIO.md", "PORTFOLIO.md")
+_add("gallery.md", "gallery.md")
 # Cross-referenced by other pages; not in the main nav but must be present
 # for strict-mode link resolution. Listed in mkdocs.yml under `not_in_nav`.
 _add("TODO.md", "TODO.md")
