@@ -108,3 +108,41 @@ Work the problem set in `../problems/README.md`. Build the tiny-GPT artifact
 in `../../../portfolio/08_tinygpt/` — multi-head attention from scratch, BPE
 tokenizer, ~10M-param transformer trained on TinyStories to a coherent-text
 regime.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three paper-doable exercises (scaled dot-product attention on 3 tokens with $d_k = 2$, causal mask on 4 tokens, RoPE relative-position identity with numerical check).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 Attention | 4 | Derive $\partial L / \partial Q, K, V$; compute one attention layer by hand on a 3-token toy. |
+| §2 Multi-head + masking | 3 | Multi-head as multiple parallel heads on split channels; causal-mask correctness proof. |
+| §3 Position encodings | 2 | Compare absolute / relative / RoPE; prove the RoPE identity. |
+| §4 BPE tokenization | 3 | Train a BPE tokenizer with `tokenizers`; round-trip test. |
+| §5 Tiny GPT training | 6 | Pre-LN + GELU + RoPE + weight tying; train on TinyStories to loss $\lesssim 2.0$. |
+| Problem set + viz | 1 | Attention-map plot of 3 prompts; identify syntactic heads. |
+| Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 9, you should be able to answer "yes" to all of:
+
+1. Can I derive $\partial L / \partial Q, \partial L / \partial K, \partial L / \partial V$ for scaled dot-product attention from the softmax + matmul chain rule?
+2. Can I prove softmax shift invariance and explain why the max-subtraction trick is what makes a softmax implementation numerically stable?
+3. Can I prove that causal-masked attention at position $t$ depends only on positions $\le t$ — and explain why the $-\infty$-before-softmax pattern is correct while $0$-after-softmax would be wrong?
+4. Can I state RoPE mathematically and prove the inner product of two RoPE-rotated vectors depends only on the *relative* position $s - t$?
+5. Can I train a ~10M-parameter GPT on TinyStories to loss $\lesssim 2.0$ and generate samples coherent enough to identify subject–verb agreement and closing punctuation?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **Attention ↔ pair-correlation / two-body interaction.** The matrix $S_{ij} = Q_i \cdot K_j / \sqrt{d_k}$ is a "potential" between token-$i$ and token-$j$; the softmax over $j$ turns it into a Boltzmann weight $A_{ij} \propto e^{-(-S_{ij})}$ — a Gibbs measure over keys at inverse-temperature $1$. The full attention output is then the **expected $V$ under this measure**, exactly the structure of an ensemble average over a two-body system.
+- **Softmax over keys ↔ partition function.** The normalising sum $\sum_j e^{S_{ij}}$ is the partition function for the $i$-th query; $\log \sum_j e^{S_{ij}}$ is the **free energy**. The $1/\sqrt{d_k}$ scale plays the role of temperature: in the high-temperature limit attention becomes uniform; in the low-temperature limit it becomes a hard argmax (the "attention collapse" failure mode).
+- **Causal mask ↔ retarded propagator.** Forbidding $j > i$ in $A_{ij}$ is the discrete-time analogue of imposing the retarded boundary condition $G^R(t, t') = 0$ for $t < t'$ — causality on the time arrow, with the mask playing the role of the Heaviside theta function.
+- **RoPE ↔ Galilean / translation invariance in the embedding manifold.** Encoding position by a rotation makes the dot-product $\tilde Q_t \cdot \tilde K_s$ depend only on $s - t$, exactly the relative-position structure of a translation-invariant system. Same trick as the Bloch theorem in solid-state: physical observables in a periodic lattice depend on $k$, not on absolute position. RoPE's frequency ladder $\theta^{(i)} = 10000^{-2i/d_k}$ is a Fourier basis on the embedding manifold.
+- **Multi-head attention ↔ multiple irreducible representations.** Each head sees a different $d_h$-dimensional projection of $Q$, $K$, $V$; they're concatenated and re-mixed. Think of each head as a separate **irrep channel** of a global symmetry — the model can simultaneously attend on syntactic, semantic, and positional features without forcing them into one shared subspace.
+
+Keep these bridges live; W9 (DPO ≡ contrastive log-likelihood update) and W10 (diffusion ≡ reverse-time SDE) reuse the Gibbs / free-energy lens.
