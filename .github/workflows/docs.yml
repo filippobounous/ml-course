@@ -1,0 +1,56 @@
+name: Deploy docs to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  # Manual trigger for ad-hoc rebuilds.
+  workflow_dispatch:
+
+# Required by `actions/deploy-pages@v4`.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one deploy at a time; cancel in-flight if a new push lands.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install docs deps
+        run: |
+          python -m pip install -U pip
+          python -m pip install -e ".[docs]"
+
+      - name: Stage + build mkdocs site
+        run: |
+          python scripts/build_docs.py --no-build
+          mkdocs build --strict --site-dir site
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

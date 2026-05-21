@@ -1,0 +1,155 @@
+# mkdocs config for the course site.
+#
+# Single source of truth: the markdown lives under modules/, portfolio/,
+# and the repo root. `scripts/build_docs.py` symlinks those files into
+# the gitignored `docs/` tree before each build so mkdocs has a clean
+# tree to render. Build with:
+#
+#   python scripts/build_docs.py            # static build into ./site/
+#   python scripts/build_docs.py --serve    # live-reload dev server
+#
+# Or, on GitHub Actions, the `docs.yml` workflow runs the staging step
+# and then `mkdocs build --strict`.
+
+site_name: ML/AI Course for Quantitative Minds
+site_description: A 12-week intensive course taking quantitatively-literate learners from tutorial ML to research-grade fluency.
+site_url: https://filippobounous.github.io/ml-course/
+repo_url: https://github.com/filippobounous/ml-course
+repo_name: filippobounous/ml-course
+edit_uri: edit/main/
+
+docs_dir: docs
+site_dir: site
+
+# These files are cross-referenced by pages in the nav but don't need their
+# own nav entry (they're developer-facing meta).
+not_in_nav: |
+  TODO.md
+  PR_PLAN.md
+  CONTRIBUTING.md
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+  features:
+    - navigation.indexes
+    - navigation.tracking
+    - navigation.top
+    - navigation.sections
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: README.md
+  - Start here:
+      - How to work through it: STUDY_GUIDE.md
+      - Syllabus: SYLLABUS.md
+      - Portfolio overview: PORTFOLIO.md
+  - Lecture notes:
+      - W1 — math foundations: modules/01/lecture_notes.md
+      - W2 — statistical learning: modules/02/lecture_notes.md
+      - W3 — classical supervised: modules/03/lecture_notes.md
+      - W4 — classical unsupervised: modules/04/lecture_notes.md
+      - W5 — neural nets from scratch: modules/05/lecture_notes.md
+      - W6 — PyTorch + Trainer: modules/06/lecture_notes.md
+      - W7 — CNNs + vision: modules/07/lecture_notes.md
+      - W8 — transformers: modules/08/lecture_notes.md
+      - W9 — LLMs + DPO: modules/09/lecture_notes.md
+      - W10 — diffusion: modules/10/lecture_notes.md
+      - W11 — RL + agents: modules/11/lecture_notes.md
+      - W12 — applied capstone: modules/12/lecture_notes.md
+      - W13 — LLMs as dev surface: modules/13/lecture_notes.md
+  - Worked examples:
+      - W1: modules/01/worked_examples.md
+      - W2: modules/02/worked_examples.md
+      - W3: modules/03/worked_examples.md
+      - W4: modules/04/worked_examples.md
+      - W5: modules/05/worked_examples.md
+      - W6: modules/06/worked_examples.md
+      - W7: modules/07/worked_examples.md
+      - W8: modules/08/worked_examples.md
+      - W9: modules/09/worked_examples.md
+      - W10: modules/10/worked_examples.md
+      - W11: modules/11/worked_examples.md
+      - W12: modules/12/worked_examples.md
+  - Problem sets:
+      - W1: modules/01/problems.md
+      - W2: modules/02/problems.md
+      - W3: modules/03/problems.md
+      - W4: modules/04/problems.md
+      - W5: modules/05/problems.md
+      - W6: modules/06/problems.md
+      - W7: modules/07/problems.md
+      - W8: modules/08/problems.md
+      - W9: modules/09/problems.md
+      - W10: modules/10/problems.md
+      - W11: modules/11/problems.md
+      - W12: modules/12/problems.md
+      - W13: modules/13/problems.md
+  - Theory solutions:
+      - W1: modules/01/solutions_theory.md
+      - W2: modules/02/solutions_theory.md
+      - W3: modules/03/solutions_theory.md
+      - W4: modules/04/solutions_theory.md
+      - W5: modules/05/solutions_theory.md
+      - W6: modules/06/solutions_theory.md
+      - W7: modules/07/solutions_theory.md
+      - W8: modules/08/solutions_theory.md
+      - W9: modules/09/solutions_theory.md
+      - W10: modules/10/solutions_theory.md
+      - W11: modules/11/solutions_theory.md
+      - W12: modules/12/solutions_theory.md
+  - Portfolio:
+      - Index: portfolio/index.md
+      - W2 — NumPy linreg: portfolio/02.md
+      - W3 — Tabular benchmark: portfolio/03.md
+      - W4 — PCA stat-arb: portfolio/04.md
+      - W5 — Micrograd: portfolio/05.md
+      - W6 — Trainer harness: portfolio/06.md
+      - W7 — Vision classifier: portfolio/07.md
+      - W8 — Tiny GPT: portfolio/08.md
+      - W9 — DPO TinyLlama: portfolio/09.md
+      - W10 — DDPM: portfolio/10.md
+      - W11 — RL + agent: portfolio/11.md
+      - W12 — Capstone: portfolio/12.md
+      - W13 — LLM dev surface: portfolio/13.md
+  - Reference:
+      - Hydra config tree: reference/hydra_configs.md

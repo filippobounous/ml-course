@@ -158,7 +158,14 @@ make format       # ruff format + fix
 make lint         # ruff + mypy
 make test         # pytest (all weeks)
 make test-week-N  # pytest just week N's problem set
+make docs         # build the mkdocs site into ./site/ (after `make install-docs`)
+make docs-serve   # live-reload dev server on http://127.0.0.1:8000
 ```
+
+The site is auto-deployed to GitHub Pages on every push to `main` via
+`.github/workflows/docs.yml`. The single source of truth is the markdown
+under `modules/`, `portfolio/`, and the repo root — `scripts/build_docs.py`
+symlinks those files into a (gitignored) `docs/` tree before each build.
 
 ## Repo layout
 

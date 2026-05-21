@@ -1,4 +1,5 @@
-.PHONY: help install-dev install-all format lint test test-slow smoke \
+.PHONY: help install-dev install-all install-docs format lint test test-slow smoke \
+        docs docs-serve \
         week-1 week-2 week-3 week-4 week-5 week-6 week-7 week-8 week-9 week-10 week-11 week-12 week-13 \
         test-week-1 test-week-2 test-week-3 test-week-4 test-week-5 test-week-6 \
         test-week-7 test-week-8 test-week-9 test-week-10 test-week-11 test-week-12 test-week-13 \
@@ -30,6 +31,20 @@ install-dev:
 install-all:
 	python -m pip install -U pip
 	python -m pip install -e ".[all]"
+
+install-docs:
+	python -m pip install -U pip
+	python -m pip install -e ".[docs]"
+
+# --- Docs site (mkdocs-material) ----------------------------------------------
+# `make docs` builds the static site into `./site/` after staging markdown
+# into `./docs/`. `make docs-serve` runs the live-reload dev server.
+docs:
+	python scripts/build_docs.py --no-build
+	mkdocs build --strict
+
+docs-serve:
+	python scripts/build_docs.py --serve
 
 format:
 	ruff format .
