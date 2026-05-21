@@ -48,6 +48,7 @@ attaching the resulting log / figure to `portfolio/<artifact>/verified.md`.
 
 ## Start here
 
+- **How to work through it:** [`STUDY_GUIDE.md`](STUDY_GUIDE.md) — weekly rhythm, suggested order, how to check yourself, wave/week mapping.
 - **Read the syllabus:** [`SYLLABUS.md`](SYLLABUS.md) — week-by-week plan, readings, problem sets, artifacts.
 - **Browse the portfolio:** [`PORTFOLIO.md`](PORTFOLIO.md) — what you will ship and how to present it.
 - **Known gaps:** [`TODO.md`](TODO.md) — review-surfaced issues not yet closed.
