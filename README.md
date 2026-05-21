@@ -52,6 +52,7 @@ attaching the resulting log / figure to `portfolio/<artifact>/verified.md`.
 - **Read the syllabus:** [`SYLLABUS.md`](SYLLABUS.md) — week-by-week plan, readings, problem sets, artifacts.
 - **Browse the portfolio:** [`PORTFOLIO.md`](PORTFOLIO.md) — what you will ship and how to present it.
 - **Known gaps:** [`TODO.md`](TODO.md) — review-surfaced issues not yet closed.
+- **What's new:** [`CHANGELOG.md`](CHANGELOG.md) — release history (latest milestone: `0.1.0`).
 - **Install the environment:** see **Setup** below.
 
 ## Course map
