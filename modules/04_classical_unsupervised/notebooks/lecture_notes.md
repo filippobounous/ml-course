@@ -70,3 +70,39 @@ This is the core of Avellaneda & Lee (2008), with many variants: OU-calibrated h
 ## What to do with these notes
 
 Work the problem set in `../problems/README.md`. Implement GMM-EM in NumPy (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/04_pca_statarb/` — a walk-forward PCA stat-arb backtest on simulated returns (and optionally Ken French industry data when offline).
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three numerical exercises (PCA on a 4-sample toy, k-means on 6 points by hand, one full GMM-EM iteration on a 4-point dataset).
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1 PCA | 4 | Three equivalent views; do the toy SVD by hand; verify sklearn agrees. |
+| §2 k-means + GMM/EM | 5 | Lloyd's algorithm on 6 points; ELBO + Jensen for EM monotonicity. |
+| §3 Density estimation | 2 | KDE bandwidth selection; normalising-flow preview. |
+| §4 PCA stat-arb | 5 | Avellaneda–Lee residual construction; walk-forward backtest with realistic transaction costs. |
+| Problem set | 3 | 2 theory + 2 implementation, test-graded via `tests/week_04/`. |
+| Office hours / review | 1 | Check proofs against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 5, you should be able to answer "yes" to all of:
+
+1. Can I derive PCA three ways (variance maximisation, reconstruction-error minimisation, probabilistic PCA in the zero-noise limit) and explain why SVD is the preferred numerical route?
+2. Can I derive the GMM E-step and M-step updates and prove EM monotonically improves the log-likelihood via the ELBO + Jensen?
+3. Can I show Lloyd's algorithm decreases distortion at every step and explain why k-means++ matters for initialisation?
+4. Can I implement PCA two ways (SVD vs power iteration) and explain when each is preferred (numerical stability vs runtime for large-$N$, small-$k$)?
+5. Can I construct a PCA stat-arb residual signal, run a walk-forward backtest, and explain why turnover and transaction-cost modelling determine whether the IS Sharpe survives OOS?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **PCA ↔ principal axes of inertia.** The sample covariance matrix is the **inertia tensor** of the centered data cloud, treating each sample as a unit mass at $x_i$. Diagonalising $S$ produces the principal moments (singular values $\sigma_i^2$) and principal axes (eigenvectors $v_i$). Same algebra you've done a hundred times for rigid-body dynamics.
+- **GMM-EM ↔ mean-field iteration on a soft-assignment free energy.** The ELBO is a **variational free-energy functional** $\mathcal{F}(q, \theta) = -\langle \log p \rangle_q - H(q)$. The E-step minimises $\mathcal{F}$ over the variational distribution $q$ (mean field); the M-step minimises $\mathcal{F}$ over physical parameters $\theta$. EM monotonicity is the second law in this micro-system — free energy never increases.
+- **k-means ↔ zero-temperature limit of GMM-EM.** Soft Boltzmann responsibilities $\gamma_{ik} \propto e^{-\|x_i - \mu_k\|^2 / 2T}$ collapse to hard assignments as $T \to 0$. The deterministic-annealing algorithm interpolates between the two by lowering $T$ gradually — same idea as simulated annealing on the cluster-assignment free energy.
+- **PCA stat-arb ↔ Marčenko–Pastur / random matrix theory.** Splitting eigenvalues into "signal" (factor modes) vs "noise" (idiosyncratic residuals) is exactly the spectral-density argument from RMT: bulk MP distribution sets the noise floor, eigenvalues outside it are the systematic factors. This is the rigorous justification for choosing the truncation level $k$.
+
+Keep these bridges live; W10 (diffusion ≡ reverse-time Langevin on a learned potential) and W12 (PINN ≡ functional-gradient descent on a PDE residual) extend the variational / functional-gradient lens.
