@@ -75,3 +75,40 @@ $T^\pi$ is a $\gamma$-contraction in sup-norm, so value iteration converges. Eve
 ## What to do with these notes
 
 Work the problem set in `../problems/README.md`. The portfolio artifact this week is the NumPy linear-models library in `../../../portfolio/02_numpy_linreg/` — it implements closed-form OLS, SGD, ridge, lasso (coordinate descent), and K-fold CV, with full tests.
+
+**Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three numerical exercises (ridge bias/variance on a 1-D problem, Bernoulli–Beta Bayesian update, 5-fold CV picking $\lambda$) that build the intuition the open-ended problems need.
+
+---
+
+## Time budget (≈ 20 hr)
+
+| Block | Hours | Focus |
+|---|---|---|
+| §1–2 ERM + bias–variance | 4 | Derive bias–variance for squared loss; plot the U-shape across $\lambda$ on a toy ridge problem. |
+| §3 MLE / MAP / Bayes | 3 | Ridge ≡ MAP under Gaussian prior; Bernoulli + Beta conjugate update on paper. |
+| §4 Linear regression | 3 | Closed-form OLS + unbiasedness + covariance; SGD convergence on a toy quadratic. |
+| §5 Cross-validation | 2 | K-fold + LOO bias; the leakage pitfall (scale-inside-the-fold). |
+| §7 MDP primer | 2 | Bellman optimality contraction; value iteration on a 5-state chain. |
+| Problem set | 4 | 2 theory + 2 implementation + 1 applied, test-graded via `tests/week_02/`. |
+| Office hours / review | 2 | Check proofs against `problems/solutions_theory.md`. |
+
+## Self-assessment rubric
+
+Before moving to Week 3, you should be able to answer "yes" to all of:
+
+1. Can I derive the bias–variance decomposition for squared loss, and identify which term ridge increases and which it decreases?
+2. Can I prove that ridge regression equals MAP under a Gaussian prior, and state the prior variance in terms of $\lambda$ and $\sigma^2$?
+3. Can I derive $\mathbb{E}[\hat\beta_\text{OLS}] = \beta$ and $\operatorname{Var}(\hat\beta_\text{OLS}) = \sigma^2(X^\top X)^{-1}$ from the closed-form?
+4. Can I explain why LOO-CV is approximately (not exactly) unbiased and why it has high variance?
+5. Can I prove the Bellman optimality operator $T^\star$ is a $\gamma$-contraction in sup-norm, and run tabular value iteration on a 5-state grid world to convergence?
+
+## Physics bridge
+
+For a theoretical physicist, the most useful re-framings:
+
+- **ERM ↔ zero-temperature Gibbs.** The empirical risk $\hat R(h)$ is a "potential" on hypothesis space; choosing $\arg\min \hat R$ is the $T \to 0$ limit of $p(h) \propto \exp(-\hat R(h)/T)$. **PAC-Bayes** bounds (W2 stretch reading) live at $T > 0$ and recover the "entropy of the posterior" as a regulariser — the **variational free energy** $\hat R + T \cdot D_\text{KL}(\text{posterior} \| \text{prior})$. ELBO (used in W10 diffusion) is this object minimised at fixed $T$.
+- **Bias–variance ↔ fluctuation-dissipation.** Bias$^2$ is the deterministic response of the predictor to the true signal; variance is the susceptibility (mean fluctuation under dataset resampling). The total MSE behaves like internal energy = mean$^2$ + fluctuation$^2$. Increasing model capacity is like increasing degrees of freedom: lower bias, higher variance.
+- **Ridge ↔ harmonic oscillator on parameter space.** The Gaussian prior $\beta \sim \mathcal{N}(0, \tau^2 I)$ is a harmonic potential $V(\beta) = \tfrac{1}{2\tau^2}\|\beta\|^2$. Adding the data term gives a quadratic Hamiltonian with shifted minimum (the ridge estimator) and inverse-Hessian covariance — exactly the linear-response analogue.
+- **Value iteration ↔ Lax–Friedrichs sweep.** The Bellman operator is a discrete-time backward sweep that propagates the value function leftwards through state space; the $\gamma$-contraction is a numerical stability condition equivalent to a CFL constraint on a discretised HJB equation. Continuous-time limit recovers the HJB PDE we'll meet in W12 (PINN capstone).
+
+Keep these bridges live; W4 (PCA ≡ modes of a centred Gaussian, susceptibility ≡ variance) and W11 (RL Bellman ≡ Hamilton–Jacobi–Bellman) extend them.
