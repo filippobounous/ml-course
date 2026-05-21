@@ -139,17 +139,26 @@ nav:
       - W12: modules/12/solutions_theory.md
   - Portfolio:
       - Index: portfolio/index.md
-      - W2 — NumPy linreg: portfolio/02.md
-      - W3 — Tabular benchmark: portfolio/03.md
-      - W4 — PCA stat-arb: portfolio/04.md
-      - W5 — Micrograd: portfolio/05.md
-      - W6 — Trainer harness: portfolio/06.md
-      - W7 — Vision classifier: portfolio/07.md
-      - W8 — Tiny GPT: portfolio/08.md
-      - W9 — DPO TinyLlama: portfolio/09.md
-      - W10 — DDPM: portfolio/10.md
-      - W11 — RL + agent: portfolio/11.md
-      - W12 — Capstone: portfolio/12.md
-      - W13 — LLM dev surface: portfolio/13.md
+      - W2 — NumPy linreg: portfolio/02/index.md
+      - W3 — Tabular benchmark: portfolio/03/index.md
+      - W4 — PCA stat-arb: portfolio/04/index.md
+      - W5 — Micrograd: portfolio/05/index.md
+      - W6 — Trainer harness: portfolio/06/index.md
+      - W7 — Vision classifier: portfolio/07/index.md
+      - W8 — Tiny GPT: portfolio/08/index.md
+      - W9 — DPO TinyLlama: portfolio/09/index.md
+      - W10 — DDPM: portfolio/10/index.md
+      - W11 — RL + agent: portfolio/11/index.md
+      - W12 — Capstone: portfolio/12/index.md
+      - W13 — LLM dev surface: portfolio/13/index.md
+  - Model cards:
+      - Template (Mitchell 2019): portfolio/model_card_template.md
+      - W5 — Micrograd MLP: portfolio/05/model_card.md
+      - W7 — CIFAR-10 ResNet-18: portfolio/07/model_card.md
+      - W8 — Tiny GPT: portfolio/08/model_card.md
+      - W9 — DPO TinyLlama: portfolio/09/model_card.md
+      - W10 — DDPM (FashionMNIST): portfolio/10/model_card.md
+      - W11 — PPO + agent: portfolio/11/model_card.md
+      - W12 — PINN / stat-arb: portfolio/12/model_card.md
   - Reference:
       - Hydra config tree: reference/hydra_configs.md

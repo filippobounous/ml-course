@@ -97,8 +97,28 @@ PORTFOLIOS = [
     ("13_dev_surface", "13"),
 ]
 _add("portfolio/README.md", "portfolio/index.md")
+_add("portfolio/model_card_template.md", "portfolio/model_card_template.md")
+# Each artifact gets a subdir so the source's relative cross-links
+# (`model_card.md`, `../model_card_template.md`) keep working in
+# the staged tree.
 for portfolio_dir, week in PORTFOLIOS:
-    _add(f"portfolio/{portfolio_dir}/README.md", f"portfolio/{week}.md")
+    _add(f"portfolio/{portfolio_dir}/README.md", f"portfolio/{week}/index.md")
+
+# Model cards live alongside artifacts that ship a trained model.
+MODEL_CARDS = [
+    ("05_micrograd", "05"),
+    ("07_vision_classifier", "07"),
+    ("08_tinygpt", "08"),
+    ("09_dpo_tinyllama", "09"),
+    ("10_ddpm", "10"),
+    ("11_rl_agent", "11"),
+    ("12_capstone", "12"),
+]
+for portfolio_dir, week in MODEL_CARDS:
+    _add(
+        f"portfolio/{portfolio_dir}/model_card.md",
+        f"portfolio/{week}/model_card.md",
+    )
 
 # Reference.
 _add("src/mlcourse/configs/README.md", "reference/hydra_configs.md")

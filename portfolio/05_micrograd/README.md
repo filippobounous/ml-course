@@ -43,3 +43,7 @@ Runs in under 30 seconds on a single CPU core.
 - Why reverse-mode is the only sensible choice for scalar-loss gradients.
 - Why `.grad` is *accumulated* (DAGs have shared subexpressions).
 - How initialisation choices interact with activation functions.
+
+## Model card
+
+See [`model_card.md`](model_card.md) — Mitchell-2019 schema (intended use, metrics, training data, caveats).

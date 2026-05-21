@@ -71,3 +71,7 @@ earlier weeks.
 
 *To be filled in after capstone delivery. This is the piece to send to
 recruiters — make it count.*
+
+## Model card
+
+See [`model_card.md`](model_card.md) — Mitchell-2019 schema (intended use, metrics, training data, caveats).

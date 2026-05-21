@@ -57,3 +57,7 @@ Use `--max-iters 200 --n-layer 2 --d-model 128` for a CI smoke check in a few mi
 *To be filled in. Suggested bullets: how much work a tokenizer is; why
 weight-tying + pre-LN matter; how the loss plateaus before generations
 become coherent; how attention maps visibly track syntactic structure.*
+
+## Model card
+
+See [`model_card.md`](model_card.md) — Mitchell-2019 schema (intended use, metrics, training data, caveats).

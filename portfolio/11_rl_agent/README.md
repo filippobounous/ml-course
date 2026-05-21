@@ -69,3 +69,7 @@ eval harness — is much more distinctive.
 ## What I learned
 
 *To be filled in after training PPO to convergence on the market-making env.*
+
+## Model card
+
+See [`model_card.md`](model_card.md) — Mitchell-2019 schema (intended use, metrics, training data, caveats).

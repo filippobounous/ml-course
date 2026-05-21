@@ -53,3 +53,7 @@ plus torch-gated shape checks on Grad-CAM and FGSM.
   test images — a much better diagnostic than aggregate accuracy.
 - How quickly FGSM erodes accuracy — 90% → 20% at ε=8/255 is typical for a
   non-adversarially-trained model.
+
+## Model card
+
+See [`model_card.md`](model_card.md) — Mitchell-2019 schema (intended use, metrics, training data, caveats).
