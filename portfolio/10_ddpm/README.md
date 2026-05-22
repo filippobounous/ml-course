@@ -94,3 +94,7 @@ tok = open_clip.get_tokenizer("ViT-B-32")
 ## What I learned
 
 *To be filled after running train + ablate end-to-end.*
+
+## Model card
+
+See [`model_card.md`](model_card.md) — Mitchell-2019 schema (intended use, metrics, training data, caveats).
