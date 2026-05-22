@@ -58,6 +58,7 @@ markdown_extensions:
   - attr_list
   - def_list
   - footnotes
+  - md_in_html
   - meta
   - tables
   - toc:
@@ -83,6 +84,7 @@ nav:
       - How to work through it: STUDY_GUIDE.md
       - Syllabus: SYLLABUS.md
       - Portfolio overview: PORTFOLIO.md
+      - Gallery: gallery.md
   - Lecture notes:
       - W1 — math foundations: modules/01/lecture_notes.md
       - W2 — statistical learning: modules/02/lecture_notes.md
