@@ -85,6 +85,7 @@ nav:
       - Syllabus: SYLLABUS.md
       - Portfolio overview: PORTFOLIO.md
       - Gallery: gallery.md
+      - Changelog: CHANGELOG.md
   - Lecture notes:
       - W1 — math foundations: modules/01/lecture_notes.md
       - W2 — statistical learning: modules/02/lecture_notes.md

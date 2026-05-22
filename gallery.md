@@ -16,7 +16,7 @@ Sorted by week.
     trained on two-moons. ~300 lines, gradient-checked against
     `torch.autograd`. Classic "do you understand backprop" signal.
 
-    [:octicons-arrow-right-24: open W5](portfolio/05.md)
+    [:octicons-arrow-right-24: open W5](portfolio/05/index.md)
 
 - :material-text-recognition: **W8 — Tiny GPT on TinyStories**
 
@@ -26,7 +26,7 @@ Sorted by week.
     decoder-only transformer trained to loss ≲ 2.0. End-to-end
     transformer engineering in one repo.
 
-    [:octicons-arrow-right-24: open W8](portfolio/08.md)
+    [:octicons-arrow-right-24: open W8](portfolio/08/index.md)
 
 - :material-tune-vertical: **W9 — DPO-tuned TinyLlama**
 
@@ -35,7 +35,7 @@ Sorted by week.
     SFT + DPO on TinyLlama-1.1B-Chat with LoRA + MLX (Apple Silicon
     native). Win-rate eval harness; model card; Gradio Space.
 
-    [:octicons-arrow-right-24: open W9](portfolio/09.md)
+    [:octicons-arrow-right-24: open W9](portfolio/09/index.md)
 
 - :material-finance: **W12 — Applied capstone**
 
@@ -45,7 +45,7 @@ Sorted by week.
     weighting, $L^2 \le 10^{-2}$ vs Cole–Hopf. **Stat-arb**:
     walk-forward PCA on Ken French industries with TCA-Sharpe.
 
-    [:octicons-arrow-right-24: open W12](portfolio/12.md)
+    [:octicons-arrow-right-24: open W12](portfolio/12/index.md)
 
 </div>
 
@@ -60,7 +60,7 @@ Sorted by week.
     Closed-form OLS, SGD, ridge, lasso (coordinate descent), K-fold CV.
     Matches sklearn to $10^{-9}$.
 
-    [:octicons-arrow-right-24: open W2](portfolio/02.md)
+    [:octicons-arrow-right-24: open W2](portfolio/02/index.md)
 
 - :material-chart-box: **W3 — Tabular benchmark**
 
@@ -69,7 +69,7 @@ Sorted by week.
     Logistic / RandomForest / XGBoost / LightGBM on UCI Adult, with
     ROC + PR + calibration + Brier decomposition.
 
-    [:octicons-arrow-right-24: open W3](portfolio/03.md)
+    [:octicons-arrow-right-24: open W3](portfolio/03/index.md)
 
 - :material-finance: **W4 — PCA stat-arb**
 
@@ -78,7 +78,7 @@ Sorted by week.
     Avellaneda–Lee residuals + rolling z-score on simulated returns.
     IS Sharpe ≈ 3.2, OOS Sharpe ≈ 2.9 (sim).
 
-    [:octicons-arrow-right-24: open W4](portfolio/04.md)
+    [:octicons-arrow-right-24: open W4](portfolio/04/index.md)
 
 - :material-cog: **W6 — Trainer harness**
 
@@ -88,7 +88,7 @@ Sorted by week.
     precision, MPS-aware autocast, deterministic checkpoint round-trip,
     Hydra config tree.
 
-    [:octicons-arrow-right-24: open W6](portfolio/06.md)
+    [:octicons-arrow-right-24: open W6](portfolio/06/index.md)
 
 - :material-image-multiple: **W7 — CIFAR-10 classifier**
 
@@ -97,7 +97,7 @@ Sorted by week.
     ResNet-18 from scratch via the Week-6 Trainer + Grad-CAM +
     FGSM adversarial sweep + failure-mode analysis.
 
-    [:octicons-arrow-right-24: open W7](portfolio/07.md)
+    [:octicons-arrow-right-24: open W7](portfolio/07/index.md)
 
 - :material-image: **W10 — DDPM vs DDIM ablation**
 
@@ -107,7 +107,7 @@ Sorted by week.
     ablation across DDPM(1000) and DDIM η=0 at {10, 20, 50, 100}.
     Reports **FID** (InceptionV3) plus a pixel-stat proxy.
 
-    [:octicons-arrow-right-24: open W10](portfolio/10.md)
+    [:octicons-arrow-right-24: open W10](portfolio/10/index.md)
 
 - :material-robot: **W11 — Custom-env PPO + tool-use agent**
 
@@ -117,7 +117,7 @@ Sorted by week.
     custom market-maker env, plus a torch-free ReAct agent with a
     deterministic eval harness.
 
-    [:octicons-arrow-right-24: open W11](portfolio/11.md)
+    [:octicons-arrow-right-24: open W11](portfolio/11/index.md)
 
 - :material-api: **W13 — LLM dev surface**
 
@@ -126,7 +126,7 @@ Sorted by week.
     LLM-as-judge wrapper + minimal MCP server demo. Plug-compatible
     with the W9 eval harness.
 
-    [:octicons-arrow-right-24: open W13](portfolio/13.md)
+    [:octicons-arrow-right-24: open W13](portfolio/13/index.md)
 
 </div>
 
@@ -144,7 +144,7 @@ Sorted by week.
 
     Lives under `portfolio/12_capstone/paper_reproduction/`.
 
-    [:octicons-arrow-right-24: see the W12 page](portfolio/12.md)
+    [:octicons-arrow-right-24: see the W12 page](portfolio/12/index.md)
 
 </div>
 

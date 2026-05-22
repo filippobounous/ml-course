@@ -47,6 +47,7 @@ _add("gallery.md", "gallery.md")
 _add("TODO.md", "TODO.md")
 _add("PR_PLAN.md", "PR_PLAN.md")
 _add("CONTRIBUTING.md", "CONTRIBUTING.md")
+_add("CHANGELOG.md", "CHANGELOG.md")
 
 # Per-week module pages.
 WEEKS = [
