@@ -80,7 +80,7 @@ Key metric: **Brier score** $\frac{1}{N} \sum_i (\hat p_i - y_i)^2$; decomposes 
 
 ## What to do with these notes
 
-Work the problem set in `../problems/README.md`. Implement IRLS logistic regression (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/03_tabular_benchmark/`: logistic / random forest / XGBoost / LightGBM on Covertype with full ROC/PR and calibration reporting.
+Work the problem set in `../problems/README.md`. Implement IRLS logistic regression (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/03_tabular_benchmark/`: logistic / random forest / XGBoost / LightGBM on UCI Adult with full ROC/PR and calibration reporting.
 
 **Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three numerical exercises (one IRLS Newton step on a 3-point problem, SVM dual closed-form on three points, Gini vs entropy vs XGBoost second-order gain on a tiny split).
 

@@ -3,7 +3,8 @@
 [![CI](https://github.com/filippobounous/ml-course/actions/workflows/ci.yml/badge.svg)](https://github.com/filippobounous/ml-course/actions/workflows/ci.yml)
 ![coverage](https://img.shields.io/badge/coverage-artifact-blue?logo=codecov) ![python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?logo=python)
 
-A 12-week, ~20 hr/week intensive course that takes a quantitatively-literate learner
+A **12-week core curriculum (W1–W12)** — plus an optional **Week 13** — at ~20 hr/week,
+that takes a quantitatively-literate learner
 (theoretical physics, maths, or equivalent) from **tutorial-level ML** to **research-grade
 fluency** in modern machine learning, deep learning, LLMs, diffusion, RL, and their
 applications to physics, quantitative finance, NLP, and computer vision.
@@ -13,9 +14,11 @@ in under an hour on an M-series Mac. No CUDA GPU required.
 
 Target balance: **30% theory** (derivations, proofs) / **40% hands-on code** (NumPy,
 PyTorch, MLX, HuggingFace) / **30% applied projects** (physics, quant, NLP, vision).
+In practice the foundational weeks (W1–W4) run noticeably more theory-heavy than this
+target; the split shifts toward code and applied work from W5 onward.
 
 Learners ship a **portfolio of artifacts** — from a micrograd-style autograd engine to a
-DPO-tuned TinyLlama with a Gradio demo — that is recruiter-ready by week 12.
+DPO-tuned TinyLlama with an LLM-as-judge eval harness — that is recruiter-ready by week 12.
 
 ---
 
@@ -45,6 +48,14 @@ table is updated as each learner confirms a number.
 **Legend.** ✅ verified on a real machine; ⏳ aspirational (target stated, not yet confirmed). Confirm
 a row by running the artifact's `demo.py`, filing a PR that ticks the box, and
 attaching the resulting log / figure to `portfolio/<artifact>/verified.md`.
+
+**Taught vs implemented.** A few topics are taught in the lecture notes but, for
+simplicity, are *not* in the shipped artifact — chiefly **W8 RoPE and the warmup/cosine
+LR schedule** (the tiny-GPT uses learned positional embeddings and a constant LR),
+**W5 BatchNorm/LayerNorm** (the scalar autograd engine omits them), and **W9's Gradio
+Space / native-MLX DPO script** (the MLX path runs via the external `mlx-lm` CLI; no
+in-repo demo app ships). Each is flagged at the artifact and tracked in
+[`TODO.md`](TODO.md) / [`REVIEW.md`](REVIEW.md).
 
 ## Start here
 

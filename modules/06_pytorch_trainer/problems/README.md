@@ -9,7 +9,9 @@
 
 3. Port the **W5 MLP to PyTorch**. Train on MNIST; compare CPU vs MPS throughput.
 4. Build **`mlcourse.Trainer`** in `src/mlcourse/trainer.py`:
-   - `fit(model, train_loader, val_loader, *, config)`
+   - construct with `Trainer(config=TrainerConfig(...))`, then train via
+     `fit(model, train_loader, val_loader=None, *, loss_fn, optimizer)`
+     (a `None` `loss_fn` means the model returns its own scalar loss)
    - gradient accumulation, gradient clipping, mixed precision (MPS-aware)
    - checkpointing, resume, deterministic seeding
    - W&B logging (optional, guarded by env var)

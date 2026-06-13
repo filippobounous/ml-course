@@ -10,7 +10,7 @@
 
 4. **SFT** TinyLlama-1.1B on an instruction dataset (Alpaca-cleaned or UltraChat-subset) with LoRA via either HF TRL on MPS or **mlx-lm** natively. Log train/val loss.
 5. **DPO** your SFT checkpoint on UltraFeedback (≤5k pairs). Compare win-rate vs the SFT baseline on a held-out prompt set using an LLM-as-judge harness.
-6. Publish an **HF model card** and a **Gradio Space** (guarded by `HF_LOGIN=1`).
+6. Publish an **HF model card** (and, optionally, a **Gradio Space** — no demo module ships in the repo; build one from the `mlx-lm` example).
 
 ## Applied
 
@@ -18,4 +18,4 @@
 
 ## Grading
 
-Tests in `tests/week_09/` verify: the DPO loss implementation matches TRL's on a fixed batch; the eval harness returns the correct schema; the Gradio demo module imports without pulling in MPS-only deps.
+Tests in `tests/week_09/` verify: the DPO loss implementation matches TRL's on a fixed batch; the eval harness returns the correct schema.

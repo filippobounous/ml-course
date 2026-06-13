@@ -71,7 +71,7 @@ for module_dir, week in WEEKS:
         f"modules/{week}/lecture_notes.md",
     )
     _add(f"modules/{module_dir}/problems/README.md", f"modules/{week}/problems.md")
-    if week not in ("13",):  # W13 has no solutions_theory yet.
+    if week not in ("13",):  # W13 is optional; its solutions_theory.md stays in-source, out of the docs nav.
         _add(
             f"modules/{module_dir}/problems/solutions_theory.md",
             f"modules/{week}/solutions_theory.md",

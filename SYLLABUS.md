@@ -5,7 +5,7 @@ background (theoretical physics, maths) and **tutorial-level ML priors**. Fits o
 **CPU / Apple Silicon (MPS)** — no CUDA GPU required.
 
 - **Duration:** 12 weeks, ~20 hr/week (plus an optional Week 13 on LLMs-as-dev-surface).
-- **Balance:** 30% theory / 40% code / 30% applied projects
+- **Balance:** 30% theory / 40% code / 30% applied projects (target; the foundational weeks W1–W4 run more theory-heavy in practice)
 - **Outputs each week:** problem set (graded) + portfolio artifact
 
 ## Weekly rhythm (~20 hrs)

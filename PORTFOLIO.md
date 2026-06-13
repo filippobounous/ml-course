@@ -1,7 +1,7 @@
 # Portfolio
 
-A curated list of artifacts produced during the 12-week course, intended to be shared
-with prospective employers and collaborators. Each artifact is a self-contained
+A curated list of artifacts produced during the 12-week core course (W1–W12), intended to
+be shared with prospective employers and collaborators. Each artifact is a self-contained
 sub-directory under `portfolio/` with:
 
 - a clean `README.md` (problem statement, method, results, figures, reproducibility command),

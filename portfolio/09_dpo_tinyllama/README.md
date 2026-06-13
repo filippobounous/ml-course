@@ -1,7 +1,7 @@
 # 09 — DPO-tuned TinyLlama + eval harness
 
-End-to-end modern LLM alignment: **SFT → DPO → eval → model card → Gradio
-Space**, all on Apple Silicon via TRL / PEFT or (recommended) **MLX**.
+End-to-end modern LLM alignment: **SFT → DPO → eval → model card** (plus an optional
+Gradio Space), on Apple Silicon via TRL / PEFT, or via the external **`mlx-lm`** CLI.
 
 ## Layout
 
@@ -21,7 +21,7 @@ python portfolio/09_dpo_tinyllama/dpo_train.py --quick   # smoke
 python portfolio/09_dpo_tinyllama/dpo_train.py           # full ~2-4 h on MPS
 ```
 
-## Reproduce (MLX — recommended on Apple Silicon)
+## Reproduce (MLX — optional, via the external `mlx-lm` CLI)
 
 ```bash
 python -m pip install mlx mlx-lm
@@ -64,14 +64,14 @@ Report **win-rate** and its binomial confidence interval.
 helpers, LoRA parameter counting, and the eval harness (deterministic
 judges, aggregate stats, round-trip JSON serialisation).
 
-## Model card + Gradio Space
+## Model card + (optional) Gradio Space
 
 After DPO:
 1. Fill out `model_card_template.md` with the target task, eval numbers, and
    known failure modes.
 2. `huggingface-cli upload <repo-id> output/dpo --repo-type model`.
-3. Copy `gradio_app.py` (see `mlx-lm` docs) into an HF Space; configure it to
-   point at your model repo.
+3. *(Optional)* Build a `gradio_app.py` from the `mlx-lm` example and copy it into
+   an HF Space pointing at your model repo. **No demo app ships in this repo.**
 
 ## What I learned
 

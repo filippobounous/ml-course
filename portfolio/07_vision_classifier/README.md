@@ -13,7 +13,10 @@ conv block, and produce an **FGSM adversarial-robustness curve**.
   one-epoch smoke check. This is the first downstream week that consumes
   the Week-6 `Trainer` harness; `tests/week_07/test_slow_trainer_integration.py`
   guards the integration. Driven by Hydra: see
-  `src/mlcourse/configs/week07/cifar10.yaml`.
+  `src/mlcourse/configs/week07/cifar10.yaml`. `demo.py` trains the from-scratch
+  ResNet and runs Grad-CAM + the FGSM sweep (the "failure analysis"); the
+  transfer-learning baseline `transfer_resnet18()` is provided as a function for
+  the comparison problem but is **not** run by `demo.py`.
 
 ## Reproduce
 

@@ -13,8 +13,8 @@
 
 ## Applied
 
-6. Portfolio artifact: `portfolio/03_tabular_benchmark/` — add a ROC / PR / calibration report for all four methods (logistic, RF, XGBoost, LightGBM).
+6. Portfolio artifact: `portfolio/03_tabular_benchmark/` — add a ROC / PR / calibration report for all benchmarked methods (logistic, random forest, sklearn GBDT, plus XGBoost / LightGBM where installed).
 
 ## Grading
 
-Tests in `tests/week_03/` check the IRLS implementation matches sklearn to tolerance and that the benchmark JSON contains all required metrics.
+Tests in `tests/week_03/` check the IRLS implementation matches sklearn to tolerance and the information-gain helpers (Gini / entropy bounds). The benchmark itself (`benchmark.py`) emits a markdown report plus PNG figures and is not auto-graded — inspect its ROC / PR / calibration output by eye.

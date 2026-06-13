@@ -7,17 +7,20 @@ Following Mitchell et al. 2019. See the
 
 - **Name.** Tiny GPT on TinyStories.
 - **Architecture.** Decoder-only transformer, ~10 M parameters.
-  Pre-LN + GELU + RoPE + weight-tied embedding/head.
+  Pre-LN + GELU + learned positional embeddings + weight-tied embedding/head.
+  (RoPE is derived in the W8 lecture notes as theory; the shipped model uses
+  learned positions for simplicity.)
 - **Framework.** PyTorch from scratch (the point of W8 is the from-
   scratch implementation, not `transformers`).
 - **Hyperparameters.** AdamW $\beta_1{=}0.9, \beta_2{=}0.95$, weight
-  decay 0.1; warmup + cosine LR; batch 64; ~1 epoch over TinyStories.
+  decay 0.1; constant LR (warmup + cosine schedule left as an exercise); batch 64;
+  ~1 epoch over TinyStories.
 
 ## Intended use
 
 - **Primary.** Demonstrate end-to-end transformer engineering: BPE
   tokenizer training, multi-head attention from scratch, causal
-  masking, RoPE, training loop, sampling.
+  masking, positional embeddings, training loop, sampling.
 - **Out-of-scope.** Generating realistic English text for any
   purpose. This is a small model on a stylistically narrow dataset
   (TinyStories — 4-year-old-reading-level fiction); its outputs are
@@ -48,8 +51,9 @@ Following Mitchell et al. 2019. See the
 - TinyStories is *not* a benchmark for general language modelling.
   Don't extrapolate from this model's behaviour to assumptions about
   GPT-3.5 / Llama at scale.
-- The from-scratch BPE tokenizer is not byte-level; `encode(decode(x))`
-  is not a strict round-trip under normalisation. Don't use it as a
+- The from-scratch BPE tokenizer is byte-level (GPT-2 style, `ByteLevel`
+  pre-tokenizer with no normalisation), so `encode(decode(x)) == x` round-trips
+  exactly. It is still trained only on TinyStories, so don't use it as a
   drop-in for production tokenization.
 - A 10 M parameter model at the Chinchilla-optimal $D = 20 N$ would
   need ~200 M tokens; this run is well under-trained.

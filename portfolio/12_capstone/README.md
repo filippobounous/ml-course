@@ -28,7 +28,8 @@ longer training). Sup-norm error in single digits of %.
 ## Track B — Quantitative finance
 
 **Headline artifact.** Walk-forward stat-arb on an OU-residual factor model,
-with purging + embargo and transaction-cost-aware Sharpe.
+with an embargo (label-horizon purging left as an advanced extension) and
+transaction-cost-aware Sharpe.
 
 - `statarb_walkforward.py` — reuses the Week-4 backtest engine, wraps it in
   walk-forward folds with an embargo, reports gross / net Sharpe, max

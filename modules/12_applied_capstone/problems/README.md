@@ -14,7 +14,7 @@ Pick the subset matching your capstone track.
 
 ## Track B — Quantitative finance
 
-2b. **Walk-forward splitting.** Implement a walk-forward split honouring embargoing / purging (López de Prado Ch. 7). Unit-test it.
+2b. **Walk-forward splitting.** Implement a walk-forward split with an **embargo** (and, as a stretch, label-horizon **purging**) per López de Prado Ch. 7. Unit-test it. The reference `statarb_walkforward.py` implements the embargo; purging is left as an extension.
 3b. **Backtest trap.** Demonstrate how in-sample leakage inflates Sharpe on a simulated AR(1) return series; then show the correct walk-forward result.
 4b. **Implementation.** Run a **PCA-based stat-arb backtest** on Ken French industry portfolios with transaction costs; report Sharpe, turnover, drawdown. Deliver in `portfolio/12_capstone/` (if Track B is chosen).
 

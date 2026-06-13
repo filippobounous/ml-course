@@ -16,7 +16,7 @@
 
 ## Applied
 
-5. **Init vs optimiser ablation.** On MNIST with a 2-hidden-layer MLP (use sklearn-loader + your autograd or torch), ablate over {Glorot, He} × {SGD, Adam} × {BN on/off}. Report final test accuracy and training curves. Short write-up: which combinations struggle, and why?
+5. **Init vs optimiser ablation.** On MNIST with a 2-hidden-layer MLP (use sklearn-loader + your autograd or torch), ablate over {Glorot, He} × {SGD, Adam} × {BN on/off} (the scalar autograd engine has no BatchNorm — use torch for the BN-on/off arm, or add BN as an extension). Report final test accuracy and training curves. Short write-up: which combinations struggle, and why?
 
 ## Grading
 

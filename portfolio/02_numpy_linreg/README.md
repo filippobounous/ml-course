@@ -22,7 +22,8 @@ portfolio/02_numpy_linreg/
 ## Quickstart
 
 ```python
-from portfolio.linreg import fit_ridge, cross_val_mse
+# Run from inside portfolio/02_numpy_linreg/ (or add it to sys.path), as demo.py does:
+from linreg import fit_ridge, cross_val_mse
 
 model = fit_ridge(X, y, alpha=1.0)
 preds = model.predict(X_test)

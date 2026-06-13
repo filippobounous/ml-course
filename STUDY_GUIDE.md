@@ -35,7 +35,7 @@ Each week follows the same shape (see `modules/NN_*/`):
 4. **Reflection** — fill in the "What I learned" bullets at the bottom
    of the artifact's `README.md`. Hiring managers skim those.
 
-Target: **~20 hr/week × 13 weeks**. CPU or Apple Silicon (MPS) is enough.
+Target: **~20 hr/week across 12 core weeks (W1–W12), plus an optional Week 13**. CPU or Apple Silicon (MPS) is enough.
 No CUDA GPU required. Each demo fits in under an hour on an M-series Mac.
 
 ---
