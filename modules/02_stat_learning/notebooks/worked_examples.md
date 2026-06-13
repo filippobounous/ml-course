@@ -40,23 +40,24 @@ Monotonically decreasing in $\lambda$.
 Total MSE = Bias$^2$ + Variance. Differentiate, set to zero:
 
 $$
-\frac{d}{d\lambda}\!\left[ \frac{\lambda^2 + 10 \sigma^2}{(10 + \lambda)^2} \right] = 0 \quad \Longrightarrow \quad \lambda^\star = \frac{10 \sigma^2}{(\beta^\star)^2} = 0.9.
+\frac{d}{d\lambda}\!\left[ \frac{\lambda^2 + 10 \sigma^2}{(10 + \lambda)^2} \right] = \frac{2 \cdot 10\,(\lambda - \sigma^2)}{(10 + \lambda)^3} = 0 \quad \Longrightarrow \quad \lambda^\star = \sigma^2 = 0.09.
 $$
 
-For this problem, optimal $\lambda \approx 1$ — not zero, despite the
-"true" model being unregularised. Numerical sanity check:
+For this problem the optimal $\lambda^\star = \sigma^2 = 0.09$ — small but
+nonzero, despite the "true" model being unregularised. Numerical sanity check:
 
 | $\lambda$ | Bias² | Variance | MSE |
 |---|---|---|---|
-| 0   | 0.000 | 0.0090 | 0.0090 |
-| 0.9 | 0.0076 | 0.0076 | 0.0151 |
-| 5   | 0.111  | 0.0040 | 0.115 |
+| 0    | 0.0000 | 0.0090 | 0.0090 |
+| 0.09 | 0.0001 | 0.0088 | 0.0089 |
+| 0.5  | 0.0023 | 0.0082 | 0.0104 |
+| 5    | 0.1111 | 0.0040 | 0.1151 |
 
-Bias$^2 = 0.000$ at $\lambda = 0$ is correct (OLS is unbiased); the
-total at $\lambda = 0$ is also slightly lower than at $\lambda^\star$ here
-because the noise level is small and the problem is well-conditioned.
-On a harder problem (larger $\sigma$ or $X^\top X$ closer to singular)
-ridge wins clearly.
+Bias$^2 = 0.0000$ at $\lambda = 0$ is correct (OLS is unbiased), but the MSE
+is minimised at $\lambda^\star = 0.09$, where the small variance reduction
+just outweighs the bias introduced. The margin over OLS is tiny here because
+the noise level is small and the problem is well-conditioned; on a harder
+problem (larger $\sigma$ or $X^\top X$ closer to singular) ridge wins clearly.
 
 ---
 

@@ -34,14 +34,17 @@ class Neuron(Module):
         self,
         n_in: int,
         *,
+        n_out: int = 1,
         activation: Activation = "tanh",
         init: str = "glorot",
         rng: random.Random | None = None,
     ) -> None:
         rng = rng or random.Random()
         if init == "glorot":
-            # Symmetric activations → Glorot/Xavier uniform in (−a, a).
-            a = (6.0 / (n_in + 1)) ** 0.5
+            # Symmetric activations → Glorot/Xavier uniform in (−a, a), using
+            # both fan-in and fan-out. n_out defaults to 1 (a standalone neuron,
+            # the single-output special case); a Layer passes its real fan-out.
+            a = (6.0 / (n_in + n_out)) ** 0.5
             self.w = [Value(rng.uniform(-a, a)) for _ in range(n_in)]
         elif init == "he":
             # He for ReLU: N(0, 2/n_in).
@@ -78,7 +81,8 @@ class Layer(Module):
     ) -> None:
         rng = rng or random.Random()
         self.neurons = [
-            Neuron(n_in, activation=activation, init=init, rng=rng) for _ in range(n_out)
+            Neuron(n_in, n_out=n_out, activation=activation, init=init, rng=rng)
+            for _ in range(n_out)
         ]
 
     def __call__(self, x: list[Value]) -> list[Value]:
