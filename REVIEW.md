@@ -83,7 +83,54 @@ metric verification.
 
 ---
 
+## Finding status (audited 2026-06-16)
+
+Status of all 26 findings against the current repo, re-verified by reading the code (not
+`TODO.md`). Implementation status of the PR backlog lives in `PR_PLAN.md` §Implementation
+status.
+
+| # | Finding | Status |
+|---|---------|--------|
+| 1 | W5 Glorot init | ✅ FIXED |
+| 2 | W2 optimal-λ worked example | ✅ FIXED |
+| 3 | Promise/deliver gap | ◑ PARTIAL — W8 RoPE/LR, W9 Gradio/MLX, W5 BatchNorm now labeled; W7 transfer baseline still not run; underlying features unimplemented |
+| 4 | Second-half artifacts never executed | ☐ OPEN (Wave 2, PR 7–12) |
+| 5 | 12-vs-13-week framing + balance claim | ✅ FIXED |
+| 6 | W6 solutions cover only 2 of 6 | ☐ OPEN |
+| 7 | W6 `Trainer.fit()` signature mismatch | ✅ FIXED |
+| 8 | "Trainer never wired into W10/W11" | ✗ WITHDRAWN — false positive (W10 uses Trainer; W11 documented exception) |
+| 9 | W9 Gradio app missing | ◑ PARTIAL — labeled optional; implementation = PR 15 |
+| 10 | W9 MLX DPO missing | ◑ PARTIAL — labeled optional; implementation = PR 14 |
+| 11 | W12 purging vs embargo | ✅ FIXED (de-promoted to embargo-only) |
+| 12 | W8 model-card tokenizer claim | ✅ FIXED |
+| 13 | W13 missing scaffold + safety topic | ◑ PARTIAL — has solutions_theory; still lacks worked_examples/rubric/physics-bridge; safety listed not covered |
+| 14 | Capstone proposal template/rubric | ◑ PARTIAL — `capstone/proposal.md` template exists; rubric + core-vs-extension scope still missing |
+| 15 | W2 MDP problem #7 no solution | ☐ OPEN |
+| 16 | W11 agent harness 4 vs 20 tasks | ☐ OPEN |
+| 17 | W10 CFG reading missing | ☐ OPEN |
+| 18 | W2 quickstart import | ✅ FIXED |
+| 19 | W8 attention-map viz code | ☐ OPEN |
+| 20 | W3 spec/dataset/test drift | ✅ FIXED |
+| 21 | W1 PL condition listed-not-covered | ☐ OPEN |
+| 22 | W6 worked example uses Trainer early | ☐ OPEN |
+| 23 | W4/W5 rubrics require untaught techniques | ☐ OPEN |
+| 24 | Worked-example false precision | ◑ PARTIAL — W10 table uses ~ marks; minor residue |
+| 25 | Cross-module forward/back refs | ☐ OPEN |
+| 26 | `build_docs.py` stale W13 comment | ✅ FIXED |
+
+**Tally:** 9 fixed · 1 withdrawn · 6 partial · 10 open.
+
+> Finding #8 was a false positive inherited from stale `TODO.md` — the gaps analyst trusted
+> the backlog instead of the code. `portfolio/10_ddpm/train.py` calls `trainer.fit(...)` and
+> `portfolio/11_rl_agent/ppo.py` documents PPO as a deliberate Trainer exception (PR 4 / PR 5).
+> Lesson: trust code over `TODO.md` for status.
+
+---
+
 ## Prioritized findings
+
+> Entries below are the original review text. See the status table above for current state —
+> #8 in particular is **withdrawn**.
 
 Severity: 🔴 high · 🟡 medium · 🟢 low. Dimension: structure / accuracy / consistency / gaps.
 
@@ -156,10 +203,12 @@ The lecture notes have the correct signature, so the problem statement is the ou
 
 ### 🟡 Medium
 
-**8. [gaps] `mlcourse.Trainer` never wired into W10/W11.** The reusable abstraction the
-course builds toward is consumed only by W7; W10 `train.py` and W11 `train_ppo.py` write
-bespoke loops, so the payoff is never demonstrated.
-*Loc:* `portfolio/10_ddpm/train.py`; `portfolio/11_rl_agent/train_ppo.py`; `src/mlcourse/trainer.py`.
+**8. [gaps] ~~`mlcourse.Trainer` never wired into W10/W11~~ — ✗ WITHDRAWN (false positive).**
+Inherited from stale `TODO.md`, not verified against code. In fact W10
+`portfolio/10_ddpm/train.py` calls `trainer.fit(..., loss_fn=None, optimizer=...)` (PR 4),
+and W11 `portfolio/11_rl_agent/ppo.py` documents PPO as a *deliberate* Trainer exception
+with rationale (PR 5). The payoff is demonstrated (W7, W10) and the one exception is
+intentional and explained. No action needed.
 
 **9. [gaps] W9 Gradio Space promised and graded against, but `gradio_app.py` doesn't exist.**
 A grading criterion points at a nonexistent file.

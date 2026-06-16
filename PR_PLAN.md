@@ -20,6 +20,68 @@ independent of each other and can run in parallel.
 
 ---
 
+## Implementation status (verified 2026-06-16)
+
+> Verified by reading the repo (not the planning docs, which had drifted). Legend:
+> ✅ done · ◑ partial · ☐ not done. **Totals: 10 ✅ · 11 ◑ · 17 ☐ of 38.**
+> An unnumbered **Wave 0.5 — correctness & honesty** (bug fixes + de-promotions from the
+> module review) also landed on branch `review/honesty-and-correctness`; see `REVIEW.md`.
+
+| PR | Title | Status | Evidence |
+|---|---|---|---|
+| 1 | CI matrix + `--run-slow` | ✅ | `test-dl` job + py 3.11/3.12 in `ci.yml` |
+| 2 | Coverage + badge | ✅ | `--cov` in CI; README badge |
+| 3 | Dev Docker image | ✅ | `docker/Dockerfile.dev` + compose |
+| 4 | W10 → Trainer | ✅ | `10_ddpm/train.py` calls `trainer.fit` |
+| 5 | W11 PPO exception | ✅ | documented in `11_rl_agent/ppo.py` |
+| 6 | Hydra refactor | ✅ | `configs/week*/*.yaml`; `@hydra.main` |
+| 7 | Verify W7 + checkpoint | ☐ | no checkpoint/`verified.md`; table ⏳ |
+| 8 | Verify W8 + checkpoint | ☐ | no checkpoint/`verified.md` |
+| 9 | Verify W9 + adapter | ☐ | no adapter/`verified.md` |
+| 10 | Verify W10 + checkpoint | ☐ | no checkpoint/`verified.md` |
+| 11 | Verify W11 + checkpoint | ☐ | no checkpoint/`verified.md` |
+| 12 | Verify W12 + checkpoint | ☐ | no checkpoint/`verified.md` |
+| 13 | Full FID (W10) | ✅ | `10_ddpm/fid.py` (InceptionV3) |
+| 14 | MLX-native DPO (W9) | ☐ | no `mlx_train.sh`/`mlx_convert.py` |
+| 15 | Gradio Space (W9) | ☐ | no `gradio_app.py` |
+| 16 | Paper-repro (W12) | ◑ | `ppo_clip_ablation.py` (PPO, not the planned LoRA); `findings.md` is an unrun placeholder |
+| 17 | W2 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 18 | W3 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 19 | W4 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 20 | W6 pedagogy polish | ◑ | blocks present; thin solutions; no `long_form.md` |
+| 21 | W7 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 22 | W8 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 23 | W9 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 24 | W11 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 25 | W12 pedagogy polish | ◑ | blocks present; no `long_form.md` |
+| 26 | W13 pedagogy polish | ◑ | code present; Claude-Code walkthrough incomplete |
+| 27 | Quantisation module | ☐ | no `modules/14_*` |
+| 28 | Distributed module | ☐ | no `modules/15_*` |
+| 29 | Interpretability module | ☐ | not created |
+| 30 | GNN module | ☐ | not created |
+| 31 | Causal module | ☐ | not created |
+| 32 | Time-series DL addendum | ☐ | not created |
+| 33 | Safety lab | ☐ | not created |
+| 34 | Speculative/MoE/KV notes | ☐ | no `advanced.md` |
+| 35 | mkdocs rendering | ✅ | `mkdocs.yml` + docs build |
+| 36 | Per-week notebooks | ☐ | 0 `.ipynb` files |
+| 37 | Dataset + model cards | ✅ | Mitchell-2019 cards for W5/W7–W12 |
+| 38 | Per-week CHANGELOG | ✅ | `CHANGELOG.md` (0.1.0) |
+
+**Deviations from plan.** PR 16 shipped a PPO-clip ablation (Schulman 2017) instead of the
+planned LoRA reproduction (Hu 2021), and its `findings.md` is an unrun placeholder. Wave 4
+(PR 17–26) shipped the pedagogy blocks (time budget / rubric / physics bridge) but **not** the
+long-form 6–8 hr problems the plan specifies. Wave 6 commit messages renumbered PR 35/36 (the
+"PR 36" commit was the gallery landing page; the planned per-week notebooks remain undone).
+Wave 5 (new topic modules) is not started.
+
+**Caveat.** "Done" here means acceptance criteria met structurally. Wave 2 verification
+(committed checkpoints + flipped honesty-table rows) is what remains to make the metric claims
+real — see `REVIEW.md` finding #4. This table is the authoritative PR status; `TODO.md` is the
+backlog and should not be trusted for completion state.
+
+---
+
 ## Wave 0 — Infrastructure unblockers (land first)
 
 These unblock everything that depends on running real models in CI or on

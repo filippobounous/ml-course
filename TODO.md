@@ -9,14 +9,19 @@ The course is usable as-is; this is the explicit backlog for making it a real
 > dependencies, acceptance criteria, and a minimum-viable-honest landing
 > order.**
 
+> **Reconciled against repo state 2026-06-16.** Items already shipped are struck
+> through below. Authoritative per-PR status lives in [`PR_PLAN.md`](PR_PLAN.md)
+> §Implementation status; code-verified findings are in [`REVIEW.md`](REVIEW.md).
+> Always cross-check the code before trusting any status claim here.
+
 ## High priority (pedagogy)
 
 - **3× expansion of lecture notes.** Current density is ~1 page/week; a real
   grad-level week is 10–15 pages. Needs:
   - Worked examples for every non-trivial derivation.
-  - Per-section time budgets (template in W1, W5, W10 — propagate to W2–W4, W6–W9, W11–W13).
-  - Physics-bridge callouts like W1 / W5 / W10 (Fisher–Rao, adjoint method, tempered Gibbs). Missing in W2–W4, W6–W9, W11–W13.
-- **Self-assessment rubrics** (5 yes/no questions) for every week — template in W1/W5/W10, missing elsewhere.
+  - ~~Per-section time budgets (template in W1, W5, W10 — propagate to W2–W4, W6–W9, W11–W13).~~ — **done:** present in 12/13 modules (all but the optional W13).
+  - ~~Physics-bridge callouts like W1 / W5 / W10 (Fisher–Rao, adjoint method, tempered Gibbs). Missing in W2–W4, W6–W9, W11–W13.~~ — **done:** present in 12/13 modules (all but the optional W13).
+- ~~**Self-assessment rubrics** (5 yes/no questions) for every week — template in W1/W5/W10, missing elsewhere.~~ — **done:** present in 12/13 modules; the optional W13 still lacks one.
 - **Solutions for theory problems.** Phase E shipped `modules/NN/problems/solutions_theory.md` for W1–W13. Some are sketchy (e.g. W4 Avellaneda–Lee cross-reference, W6 has only two solutions); expand.
 - **Long-form problems** — each week should have at least one 6-8 hour problem that ties multiple ideas together. Currently absent.
 
@@ -24,8 +29,8 @@ The course is usable as-is; this is the explicit backlog for making it a real
 
 - **Verify every compute claim on real hardware.** The `Verified vs aspirational` table in `README.md` has ⏳ entries for every torch-dependent artifact. Each needs a real run with a committed log.
 - **Commit reference trained checkpoints** for W7 (ResNet-18 CIFAR-10), W8 (tiny GPT on TinyStories), W9 (DPO LoRA adapter), W10 (DDPM ε-model), W12 (PINN). Enables learners to skip training and still use the evaluation / Grad-CAM / sampling pipelines.
-- **Wire `mlcourse.Trainer` into W10 and W11.** Phase E did it for W7 only; W10 (`train.py`) and W11 (`train_ppo.py`) still write bespoke training loops.
-- **Full FID via InceptionV3** for W10 (currently a pixel-statistics proxy).
+- ~~**Wire `mlcourse.Trainer` into W10 and W11.**~~ — **done:** W10 `train.py` uses `Trainer.fit` (PR 4); W11 PPO is a deliberate, documented Trainer exception in `ppo.py` (PR 5).
+- ~~**Full FID via InceptionV3** for W10.~~ — **done:** `portfolio/10_ddpm/fid.py` implements real InceptionV3 FID (PR 13).
 - **MLX-native DPO path** for W9 (currently only described in README — `mlx-lm` commands cited but not implemented).
 
 ## Medium priority (missing topics)
