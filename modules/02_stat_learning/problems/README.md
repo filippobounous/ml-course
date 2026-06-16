@@ -14,7 +14,7 @@
 
 ## Applied
 
-7. Formalise a simple **MDP** (e.g. grid world) and compute the optimal state-value function via policy iteration (tabular). This is preparation for Week 11.
+7. Formalise a simple **MDP** (e.g. grid world) and compute the optimal state-value function via policy iteration (tabular). This is preparation for Week 11. *Self-guided — no auto-grader for this one; check your result against the Bellman fixed point $V = \max_a [\,r + \gamma P V\,]$. W11 ships the full tabular solver.*
 
 ## Grading
 

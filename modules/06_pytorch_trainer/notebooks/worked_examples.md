@@ -85,6 +85,9 @@ Same gradient → same step. ✓
 
 ## Example 3 — Checkpoint round-trip determinism
 
+> This uses `mlcourse.Trainer`, which you build in problem #4 — read the snippet as
+> the reference behaviour you're working toward, not a prerequisite.
+
 ```python
 import torch
 from mlcourse.trainer import Trainer, TrainerConfig

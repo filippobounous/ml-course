@@ -108,4 +108,4 @@ Init is not a hyperparameter; it's a **dynamical-isometry condition** (Penningto
 
 ## What to do with these examples
 
-For Example 1, swap `*` for an `Exp` node and re-run the backward — you'll need to look up the $\partial_a e^a = e^a$ rule and reuse the forward value. For Example 2, plot $\hat m_t$ vs $m_t$ for $\beta_1 \in \{0.5, 0.9, 0.99\}$ — the warmup-bias gap is dramatic for $\beta_1 = 0.99$. For Example 3, simulate the variance propagation in NumPy with a small fixed seed and verify the calculation empirically.
+For Example 1, swap `*` for an `Exp` node and re-run the backward — you'll need to look up the $\partial_a e^a = e^a$ rule and reuse the forward value. For Example 2, plot $\hat m_t$ vs $m_t$ for $\beta_1 \in \{0.5, 0.9, 0.99\}$ — the warmup-bias gap is dramatic for $\beta_1 = 0.99$. For Example 3, simulate the variance propagation in NumPy with a small fixed seed and verify the calculation empirically (starter recipe: draw `W ~ Glorot`, push a standard-normal input through `L` linear+tanh layers, and print `x.var()` per layer — it should stay ≈ constant under correct Glorot and shrink/explode with the wrong fan).

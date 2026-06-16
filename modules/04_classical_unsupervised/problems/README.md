@@ -9,7 +9,7 @@
 ## Implementation
 
 4. Implement **GMM-EM** in NumPy on Old Faithful; compare to `sklearn.mixture.GaussianMixture`. Plot log-likelihood vs iteration.
-5. Implement **PCA via SVD** and via power iteration; compare stability and runtime.
+5. Implement **PCA via SVD** and via power iteration; compare stability and runtime. *(Power iteration isn't covered in the lecture — that implementation is the exercise: repeat $v \leftarrow A v / \lVert A v \rVert$ on the covariance $A = X^\top X$ for the top eigenvector, then deflate for the next.)*
 
 ## Applied (portfolio artifact)
 

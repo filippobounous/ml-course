@@ -12,6 +12,7 @@
 
 - Vincent (2011), "A Connection Between Score Matching and Denoising Autoencoders"
 - Nichol & Dhariwal (2021), "Improved Denoising Diffusion Probabilistic Models" (cosine schedule)
+- Ho & Salimans (2022), "Classifier-Free Diffusion Guidance" — primary source for the CFG implemented and tested in this module
 - Liu et al. (2023), "Visual Instruction Tuning" (LLaVA)
 - Podell et al. (2023), "SDXL"
 

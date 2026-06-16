@@ -105,20 +105,20 @@ status.
 | 12 | W8 model-card tokenizer claim | ✅ FIXED |
 | 13 | W13 missing scaffold + safety topic | ◑ PARTIAL — has solutions_theory; still lacks worked_examples/rubric/physics-bridge; safety listed not covered |
 | 14 | Capstone proposal template/rubric | ◑ PARTIAL — `capstone/proposal.md` template exists; rubric + core-vs-extension scope still missing |
-| 15 | W2 MDP problem #7 no solution | ☐ OPEN |
+| 15 | W2 MDP problem #7 no solution | ✅ FIXED — marked self-guided with a Bellman self-check; grading clarified |
 | 16 | W11 agent harness 4 vs 20 tasks | ☐ OPEN |
-| 17 | W10 CFG reading missing | ☐ OPEN |
+| 17 | W10 CFG reading missing | ✅ FIXED — Ho & Salimans (2022) added to readings |
 | 18 | W2 quickstart import | ✅ FIXED |
 | 19 | W8 attention-map viz code | ☐ OPEN |
 | 20 | W3 spec/dataset/test drift | ✅ FIXED |
-| 21 | W1 PL condition listed-not-covered | ☐ OPEN |
-| 22 | W6 worked example uses Trainer early | ☐ OPEN |
-| 23 | W4/W5 rubrics require untaught techniques | ☐ OPEN |
-| 24 | Worked-example false precision | ◑ PARTIAL — W10 table uses ~ marks; minor residue |
-| 25 | Cross-module forward/back refs | ☐ OPEN |
+| 21 | W1 PL condition listed-not-covered | ✅ FIXED — PL note added to W1 optimization section |
+| 22 | W6 worked example uses Trainer early | ✅ FIXED — framing note added |
+| 23 | W4/W5 rubrics require untaught techniques | ✅ FIXED — power-iteration + empirical-Glorot starter hints added |
+| 24 | Worked-example false precision | ✅ FIXED — W10 table precision note added; W4 jump is intentional/labeled |
+| 25 | Cross-module forward/back refs | ✅ FIXED — W11 now calls back to the W2 MDP primer (W10→W1 already existed) |
 | 26 | `build_docs.py` stale W13 comment | ✅ FIXED |
 
-**Tally:** 9 fixed · 1 withdrawn · 6 partial · 10 open.
+**Tally:** 16 fixed · 1 withdrawn · 5 partial · 4 open. (Remaining open are the content/hardware items: #4 verify artifacts, #6 W6 solutions, #16 W11 20 eval tasks, #19 W8 attention-viz; partial: #3, #9, #10, #13, #14.)
 
 > Finding #8 was a false positive inherited from stale `TODO.md` — the gaps analyst trusted
 > the backlog instead of the code. `portfolio/10_ddpm/train.py` calls `trainer.fit(...)` and

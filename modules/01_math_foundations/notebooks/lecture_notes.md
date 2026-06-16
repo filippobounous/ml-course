@@ -89,6 +89,8 @@ $$f(x_T) - f^\star \le \frac{L \|x_0 - x^\star\|^2}{2 T}.$$
 
 Add $\mu$-strong convexity and you get linear convergence $f(x_T) - f^\star \le (1 - \mu/L)^T [f(x_0) - f^\star]$. The **condition number** $\kappa = L / \mu$ controls how fast you can run.
 
+Strong convexity is sufficient but not necessary for this linear rate. The weaker **Polyak–Łojasiewicz (PL) condition** $\tfrac12 \lVert \nabla f(x) \rVert^2 \ge \mu\,(f(x) - f^\star)$ already gives the same $(1 - \mu/L)^T$ rate to the *global* minimum — and, unlike convexity, it can hold for some non-convex objectives (e.g. over-parameterised least squares), which is why it recurs in deep-learning optimisation theory.
+
 **Stochastic gradient descent** replaces the exact gradient with an unbiased estimate; the optimal step size scales as $1/\sqrt{T}$ in the general convex case, with momentum and adaptive methods (Adam, AdamW) accelerating in practice.
 
 ### Lagrangian duality (as needed)

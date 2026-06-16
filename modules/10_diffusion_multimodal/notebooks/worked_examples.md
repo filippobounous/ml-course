@@ -19,6 +19,9 @@ $\alpha_t = 1 - \beta_t$, $\bar\alpha_t = \prod_{s \le t} \alpha_s$.
 | 500 | $\sim 0.010$ | $\sim 0.990$ | $\sim 0.094$ | $0.3066$ | $0.9518$ |
 | 1000 | $0.02$ | $0.98$ | $\sim 4.0 \times 10^{-5}$ | $0.00632$ | $0.99998$ |
 
+*Entries below row 1 are rounded to the precision shown (the $\sim$ flags the compounding
+$\bar\alpha_t$); recompute from the linear schedule if you need exact values.*
+
 ### Closed form check
 
 $q(x_t | x_0) = \mathcal{N}(\sqrt{\bar\alpha_t} x_0, (1 - \bar\alpha_t) I)$.

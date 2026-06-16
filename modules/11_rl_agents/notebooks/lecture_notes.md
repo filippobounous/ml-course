@@ -6,6 +6,8 @@
 
 ## 1. The MDP framework
 
+You met this in the **Week 2 MDP primer** (problem 7 there formalised a grid world and solved it by tabular policy iteration); here we pick it up and push past the tabular regime.
+
 A (finite-horizon, discounted) Markov decision process is the tuple $(\mathcal{S}, \mathcal{A}, p, r, \gamma)$:
 
 - $\mathcal{S}$: states.
