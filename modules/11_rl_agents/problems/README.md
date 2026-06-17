@@ -14,7 +14,7 @@
 
 ## Applied (portfolio)
 
-7. Build a **from-scratch tool-use agent** (ReAct loop) with at most two tools (e.g. Python eval + calculator, or retrieval over a 100-document corpus). Ship a deterministic **eval harness**: 20 curated tasks with reference answers; compute success rate under a fixed seed.
+7. Build a **from-scratch tool-use agent** (ReAct loop) with at most two tools (e.g. Python eval + calculator, or retrieval over a 100-document corpus). Ship a deterministic **eval harness**: 20 curated tasks with reference answers; compute success rate under a fixed seed. The reference suite is `_sample_eval_tasks()` in `portfolio/11_rl_agent/agent.py` — 10 arithmetic + 10 retrieval tasks (taxonomy in its docstring), run via `default_config(_eval_corpus())`.
 
 ## Grading
 

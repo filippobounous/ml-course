@@ -239,12 +239,62 @@ def default_config(corpus: dict[str, str] | None = None) -> AgentConfig:
     return AgentConfig(max_steps=6, tools=_make_toolkit(corpus))
 
 
+def _eval_corpus() -> dict[str, str]:
+    """Fact corpus for the retrieval half of the eval suite (keyword retriever)."""
+    return {
+        "france": "Paris is the capital of France.",
+        "japan": "Tokyo is the capital of Japan.",
+        "uk": "London is the capital of the United Kingdom.",
+        "germany": "Berlin is the capital of Germany.",
+        "italy": "Rome is the capital of Italy.",
+        "spain": "Madrid is the capital of Spain.",
+        "canada": "Ottawa is the capital of Canada.",
+        "australia": "Canberra is the capital of Australia.",
+        "egypt": "Cairo is the capital of Egypt.",
+        "brazil": "Brasilia is the capital of Brazil.",
+    }
+
+
 def _sample_eval_tasks() -> list[AgentTask]:
+    """The 20-task agent eval suite: 10 arithmetic + 10 text-retrieval.
+
+    Taxonomy:
+      * Arithmetic (calculator tool): operator precedence, division, powers,
+        nested parentheses, decimals. Graded numerically (abs_tol=1e-9) so that
+        "N" and "N.0" both pass.
+      * Retrieval (keyword retriever over ``_eval_corpus()``): single-hop
+        capital-city lookups; graded by exact body match.
+
+    Run these with ``default_config(_eval_corpus())`` so the retriever sees
+    every fact the retrieval tasks reference.
+    """
+    tol = 1e-9
     return [
-        AgentTask("2 + 3 * 4", "14"),
-        AgentTask("(10 - 4) / 2", "3.0"),
+        # --- arithmetic (calculator) ---
+        AgentTask("2 + 3 * 4", "14", tolerance=tol),
+        AgentTask("(10 - 4) / 2", "3", tolerance=tol),
+        AgentTask("100 / 8", "12.5", tolerance=tol),
+        AgentTask("2 ** 10", "1024", tolerance=tol),
+        AgentTask("7 * 6 - 5", "37", tolerance=tol),
+        AgentTask("(1 + 2 + 3 + 4) * 2", "20", tolerance=tol),
+        AgentTask("3.5 * 4", "14", tolerance=tol),
+        AgentTask("144 / 12 / 3", "4", tolerance=tol),
+        AgentTask("9 ** 0.5", "3", tolerance=tol),
+        AgentTask("(8 - 3) * (8 + 3)", "55", tolerance=tol),
+        # --- retrieval (keyword retriever over _eval_corpus) ---
         AgentTask("What is the capital of France?", "Paris is the capital of France."),
         AgentTask("What is the capital of Japan?", "Tokyo is the capital of Japan."),
+        AgentTask(
+            "What is the capital of the United Kingdom?",
+            "London is the capital of the United Kingdom.",
+        ),
+        AgentTask("What is the capital of Germany?", "Berlin is the capital of Germany."),
+        AgentTask("What is the capital of Italy?", "Rome is the capital of Italy."),
+        AgentTask("What is the capital of Spain?", "Madrid is the capital of Spain."),
+        AgentTask("What is the capital of Canada?", "Ottawa is the capital of Canada."),
+        AgentTask("What is the capital of Australia?", "Canberra is the capital of Australia."),
+        AgentTask("What is the capital of Egypt?", "Cairo is the capital of Egypt."),
+        AgentTask("What is the capital of Brazil?", "Brasilia is the capital of Brazil."),
     ]
 
 
@@ -258,7 +308,7 @@ def _extract_answer_from_observation(obs: str) -> str:
 if __name__ == "__main__":
     tasks = _sample_eval_tasks()
     policy = make_math_and_lookup_policy()
-    report = evaluate_agent(tasks, policy, default_config())
+    report = evaluate_agent(tasks, policy, default_config(_eval_corpus()))
     print(f"success rate: {report.success_rate:.2f} over {report.n} tasks")
     for t, r, ok in report.per_task:
         print(f"  [{'OK' if ok else 'FAIL'}] {t.prompt!r} -> {r.answer!r}")

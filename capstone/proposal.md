@@ -1,6 +1,6 @@
 # Capstone proposal
 
-*Due end of Week 8. One page maximum.*
+*Due end of Week 8. One page maximum. Graded against the rubric in [`README.md`](README.md).*
 
 ## Goal
 

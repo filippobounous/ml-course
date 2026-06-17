@@ -31,6 +31,23 @@ Solve **Burgers' equation** $u_t + u u_x = \nu u_{xx}$ with a PINN. Compare to t
 - Portfolio artifact: `portfolio/12_capstone/` — capstone project (PINN **or** stat-arb).
 - Bonus artifact: `portfolio/12_capstone/paper_reproduction/` — reproduce a figure from a paper (LoRA, DDPM, PPO, or a PINN paper) at tiny scale with an ablation table.
 
+## What ships as reference vs what you build
+
+The objectives above are broader than what the repo implements — only the **reference
+capstones** ship as runnable code. Treat the rest as topics you implement *if your capstone
+needs them* (consistent with the README "taught vs implemented" policy).
+
+| Component | Status |
+|---|---|
+| Track A — PINN for Burgers' (`portfolio/12_capstone/pinn_burgers.py`, `demo_pinn.py`) | **reference** — read, run, extend |
+| Track A — Neural ODEs (`torchdiffeq`), PySR symbolic regression | **taught only** — implement if you choose them |
+| Track B — PCA / factor stat-arb (`portfolio/12_capstone/statarb_walkforward.py`, `demo_statarb.py`) | **reference** — read, run, extend |
+| Track B — time-series transformer / N-BEATS-lite, GARCH baselines | **taught only** — implement if you choose them |
+| Paper reproduction (`paper_reproduction/ppo_clip_ablation.py`) | **reference scaffold** — adapt to your chosen paper |
+
+Your capstone = pick **one** track's reference, then add a contribution on top (an ablation,
+a new baseline, a different dataset). Grading rubric: [`capstone/README.md`](../../capstone/README.md).
+
 ## Reading plan
 
 See `readings.md`.

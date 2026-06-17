@@ -103,10 +103,10 @@ status.
 | 10 | W9 MLX DPO missing | ◑ PARTIAL — labeled optional; implementation = PR 14 |
 | 11 | W12 purging vs embargo | ✅ FIXED (de-promoted to embargo-only) |
 | 12 | W8 model-card tokenizer claim | ✅ FIXED |
-| 13 | W13 missing scaffold + safety topic | ◑ PARTIAL — has solutions_theory; still lacks worked_examples/rubric/physics-bridge; safety listed not covered |
-| 14 | Capstone proposal template/rubric | ◑ PARTIAL — `capstone/proposal.md` template exists; rubric + core-vs-extension scope still missing |
+| 13 | W13 missing scaffold + safety topic | ✅ FIXED — added worked_examples.md, time budget, self-assessment rubric, physics bridge, and a Safety section |
+| 14 | Capstone proposal template/rubric | ✅ FIXED — grading rubric in `capstone/README.md` + reference-vs-required scope table in W12 |
 | 15 | W2 MDP problem #7 no solution | ✅ FIXED — marked self-guided with a Bellman self-check; grading clarified |
-| 16 | W11 agent harness 4 vs 20 tasks | ☐ OPEN |
+| 16 | W11 agent harness 4 vs 20 tasks | ✅ FIXED — expanded to 20 tasks (10 arithmetic + 10 retrieval); verified success_rate 1.00 |
 | 17 | W10 CFG reading missing | ✅ FIXED — Ho & Salimans (2022) added to readings |
 | 18 | W2 quickstart import | ✅ FIXED |
 | 19 | W8 attention-map viz code | ☐ OPEN |
@@ -118,7 +118,7 @@ status.
 | 25 | Cross-module forward/back refs | ✅ FIXED — W11 now calls back to the W2 MDP primer (W10→W1 already existed) |
 | 26 | `build_docs.py` stale W13 comment | ✅ FIXED |
 
-**Tally:** 17 fixed · 1 withdrawn · 5 partial · 3 open. (Remaining open: #4 verify artifacts, #16 W11 20 eval tasks, #19 W8 attention-viz; partial: #3, #9, #10, #13, #14.)
+**Tally:** 20 fixed · 1 withdrawn · 3 partial · 2 open. (Remaining open: #4 verify artifacts (Wave 2 — needs hardware), #19 W8 attention-viz (example plots need a trained model). Partial: #3 W7 transfer run, #9 Gradio app, #10 MLX script — all feature-implementation/hardware, not doc work.)
 
 > Finding #8 was a false positive inherited from stale `TODO.md` — the gaps analyst trusted
 > the backlog instead of the code. `portfolio/10_ddpm/train.py` calls `trainer.fit(...)` and
