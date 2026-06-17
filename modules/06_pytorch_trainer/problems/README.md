@@ -25,3 +25,9 @@
 ## Grading
 
 Tests in `tests/week_06/` check that `Trainer.fit` runs end-to-end on a tiny synthetic dataset and that checkpoint → resume produces bit-identical weights (given determinism flag).
+
+## Solutions
+
+- Theory (#1–2): [`solutions_theory.md`](solutions_theory.md)
+- Implementation (#3–5): [`solutions_implementation.md`](solutions_implementation.md)
+- Applied (#6, `torch.profiler`): [`solutions_applied.md`](solutions_applied.md)

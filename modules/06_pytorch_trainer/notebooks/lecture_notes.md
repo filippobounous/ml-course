@@ -85,6 +85,25 @@ Without a `GradScaler` you may see underflow on fp16; with MPS this is not alway
 
 `torch.save({"model": model.state_dict(), "optimizer": optimizer.state_dict(), "epoch": epoch, "rng": torch.random.get_rng_state()}, path)`. Resuming means loading all of these and calling the RNG setter — otherwise you lose determinism across checkpoints.
 
+### Profiling a step
+
+When a step is slower than expected, *measure* — don't guess. `torch.profiler` records per-op time:
+
+```python
+from torch.profiler import profile, ProfilerActivity
+with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+    for _ in range(10):
+        step()   # one forward / backward / optimiser step
+print(prof.key_averages().table(sort_by="self_cpu_time_total", row_limit=10))
+```
+
+Sort by **self** time (an op's own time, not its children's) — that's what you optimise.
+Two MPS-specific rules: **synchronise** (`torch.mps.synchronize()`) before reading timings,
+because MPS is asynchronous; and **warm up** a few steps first so one-off kernel compilation
+doesn't dominate the table. On MPS, kernels currently surface under CPU activities (there is
+no `ProfilerActivity.MPS` yet); for true on-device kernel timing reach for Apple's
+Instruments. (Worked through in applied problem 6.)
+
 ## 5. The `Trainer` we build this week
 
 Requirements, from `portfolio/06_trainer/README.md`:

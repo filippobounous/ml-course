@@ -96,7 +96,7 @@ status.
 | 3 | Promise/deliver gap | ◑ PARTIAL — W8 RoPE/LR, W9 Gradio/MLX, W5 BatchNorm now labeled; W7 transfer baseline still not run; underlying features unimplemented |
 | 4 | Second-half artifacts never executed | ☐ OPEN (Wave 2, PR 7–12) |
 | 5 | 12-vs-13-week framing + balance claim | ✅ FIXED |
-| 6 | W6 solutions cover only 2 of 6 | ☐ OPEN |
+| 6 | W6 solutions cover only 2 of 6 | ✅ FIXED — `solutions_implementation.md` (#3–5) + `solutions_applied.md` (#6) + profiler lecture subsection |
 | 7 | W6 `Trainer.fit()` signature mismatch | ✅ FIXED |
 | 8 | "Trainer never wired into W10/W11" | ✗ WITHDRAWN — false positive (W10 uses Trainer; W11 documented exception) |
 | 9 | W9 Gradio app missing | ◑ PARTIAL — labeled optional; implementation = PR 15 |
@@ -118,7 +118,7 @@ status.
 | 25 | Cross-module forward/back refs | ✅ FIXED — W11 now calls back to the W2 MDP primer (W10→W1 already existed) |
 | 26 | `build_docs.py` stale W13 comment | ✅ FIXED |
 
-**Tally:** 16 fixed · 1 withdrawn · 5 partial · 4 open. (Remaining open are the content/hardware items: #4 verify artifacts, #6 W6 solutions, #16 W11 20 eval tasks, #19 W8 attention-viz; partial: #3, #9, #10, #13, #14.)
+**Tally:** 17 fixed · 1 withdrawn · 5 partial · 3 open. (Remaining open: #4 verify artifacts, #16 W11 20 eval tasks, #19 W8 attention-viz; partial: #3, #9, #10, #13, #14.)
 
 > Finding #8 was a false positive inherited from stale `TODO.md` — the gaps analyst trusted
 > the backlog instead of the code. `portfolio/10_ddpm/train.py` calls `trainer.fit(...)` and
