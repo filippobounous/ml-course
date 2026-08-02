@@ -37,3 +37,12 @@ Fill in after running (`results.md` is auto-generated):
 3. Which model is best-calibrated out of the box? (Hint: typically logistic
    regression and scikit-learn GBDT; XGBoost / LightGBM often over-confident
    and benefit from Platt or isotonic rescaling.)
+
+## What I learned
+
+*To be filled after completing Week 3. Suggested bullets:*
+
+- Where gradient boosting actually beats a well-tuned linear baseline — and
+  where it doesn't.
+- Why AUC-ROC and AUC-PR disagree under class imbalance.
+- What a reliability diagram tells you that a single accuracy number hides.

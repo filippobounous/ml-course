@@ -102,8 +102,8 @@ CLIP zero-shot retrieval demo.
 | §3 score matching | 2 | Verify Tweedie's formula; relate ε-prediction and score explicitly. |
 | §4 DDIM | 2 | Derive the DDIM update; verify η=0 determinism on a toy problem. |
 | §5 SDE view | 2 | Connect Week 1 Langevin to reverse-time VP-SDE. |
-| §6 CFG | 2 | Derive CFG from the Bayes rule; implement in the portfolio UNet. |
-| §7 multimodal | 2 | Run `open_clip` ViT-B/32 zero-shot on a small image folder. |
+| §7 CFG (latent diffusion & beyond) | 2 | Derive CFG from the Bayes rule; implement in the portfolio UNet. |
+| §6, §8 multimodal | 2 | Run `open_clip` ViT-B/32 zero-shot on a small image folder; skim the LLaVA projection-layer trick. |
 | Artifact | 4 | UNet + DDPM+CFG training + DDPM/DDIM ablation figure. |
 | Office hours | 2 | Cross-check with `problems/solutions_theory.md`. |
 

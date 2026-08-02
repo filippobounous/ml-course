@@ -54,3 +54,12 @@ If torch is not installed the script prints a friendly skip message and exits.
 Demonstrates research-grade engineering hygiene: reproducibility (seeds + RNG
 round-trip), configuration (Hydra), logging (W&B opt-in), and MPS-aware
 mixed precision — ready for the much larger artefacts in Weeks 7–12.
+
+## What I learned
+
+*To be filled after completing Week 6. Suggested bullets:*
+
+- Which seeds you have to set before a run is genuinely reproducible.
+- What `torch.autocast("mps")` casts, and what it deliberately leaves in fp32.
+- Why checkpoint round-tripping needs the optimiser and RNG state, not just
+  the weights.

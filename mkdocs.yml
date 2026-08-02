@@ -140,6 +140,7 @@ nav:
       - W10: modules/10/solutions_theory.md
       - W11: modules/11/solutions_theory.md
       - W12: modules/12/solutions_theory.md
+      - W13: modules/13/solutions_theory.md
   - Portfolio:
       - Index: portfolio/index.md
       - W2 — NumPy linreg: portfolio/02/index.md

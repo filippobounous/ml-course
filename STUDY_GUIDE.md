@@ -30,8 +30,11 @@ Each week follows the same shape (see `modules/NN_*/`):
    2 implementation + 1–2 applied — ~8 hr. Solutions are in
    `solutions.py` (code) and `solutions_theory.md` (proofs).
 3. **Portfolio artifact** (`portfolio/NN_*/`) — the shareable piece —
-   ~6 hr. Each artifact has a `README.md` (what it is) and a `demo.py`
-   (one command to run it end-to-end).
+   ~6 hr. Each artifact has a `README.md` (what it is) and a single
+   reproduction command, `make reproduce-N`. The underlying entry point
+   is `demo.py` for most artifacts and a named script for the rest
+   (`benchmark.py`, `train.py`, `train_ppo.py`, `dpo_train.py`) — the
+   artifact README names it.
 4. **Reflection** — fill in the "What I learned" bullets at the bottom
    of the artifact's `README.md`. Hiring managers skim those.
 

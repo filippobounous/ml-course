@@ -118,11 +118,11 @@ regime.
 | Block | Hours | Focus |
 |---|---|---|
 | §1 Attention | 4 | Derive $\partial L / \partial Q, K, V$; compute one attention layer by hand on a 3-token toy. |
-| §2 Multi-head + masking | 3 | Multi-head as multiple parallel heads on split channels; causal-mask correctness proof. |
-| §3 Position encodings | 2 | Compare absolute / relative / RoPE; prove the RoPE identity. |
-| §4 BPE tokenization | 3 | Train a BPE tokenizer with `tokenizers`; round-trip test. |
-| §5 Tiny GPT training | 6 | Pre-LN + GELU + RoPE + weight tying; train on TinyStories to loss $\lesssim 2.0$. |
-| Problem set + viz | 1 | Attention-map plot of 3 prompts; identify syntactic heads. |
+| §2–§3 Multi-head + masking | 3 | Multi-head as multiple parallel heads on split channels; causal-mask correctness proof. |
+| §4 Position encodings | 2 | Compare absolute / relative / RoPE; prove the RoPE identity. |
+| §5 BPE tokenization | 3 | Train a BPE tokenizer with `tokenizers`; round-trip test. |
+| §6–§7 Tiny GPT training | 6 | Pre-LN + GELU + learned positions + weight tying; train on TinyStories to loss $\lesssim 2.0$. Swapping in RoPE is the natural stretch. |
+| §8 Problem set + viz | 1 | Attention-map plot of 3 prompts; identify syntactic heads. |
 | Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
 
 ## Self-assessment rubric

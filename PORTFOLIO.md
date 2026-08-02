@@ -1,6 +1,7 @@
 # Portfolio
 
-A curated list of artifacts produced during the 12-week course, intended to be shared
+A curated list of artifacts produced during the 12-week course (plus the optional
+Week 13), intended to be shared
 with prospective employers and collaborators. Each artifact is a self-contained
 sub-directory under `portfolio/` with:
 
@@ -37,6 +38,7 @@ make portfolio-build
 | 07 | CIFAR-10 classifier + failure analysis — `portfolio/07_vision_classifier/` | Computer vision with real critique |
 | 10 | DDPM vs DDIM ablation mini-paper — `portfolio/10_ddpm/` | Diffusion from scratch |
 | 11 | Custom-env PPO + tool-use agent — `portfolio/11_rl_agent/` | RL + agents, distinctive (not stock CartPole) |
+| 13 | LLM judge + cost model + MCP server — `portfolio/13_dev_surface/` | LLMs as a development surface (optional week) |
 
 ## Bonus / stretch
 
@@ -53,7 +55,8 @@ make portfolio-build
 3. **Per-artifact README** should always answer: problem, method, results, what I
    would do with more compute, what I learned.
 4. **Reproducibility:** every artifact has a single command that reproduces the key
-   figure or metric (`make -C portfolio/NN_* reproduce`).
+   figure or metric — `make reproduce-N` (N = the artifact number). Runtimes range
+   from seconds to hours; check the honesty table in `README.md` first.
 
 ## Template for an artifact README
 
@@ -71,7 +74,7 @@ Figure / table. Metric with units. Baseline comparison.
 
 ## Reproduce
 ```bash
-make reproduce
+make reproduce-<N>
 ```
 
 ## What I learned

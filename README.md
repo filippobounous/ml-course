@@ -71,6 +71,7 @@ attaching the resulting log / figure to `portfolio/<artifact>/verified.md`.
 | 10 | Diffusion & multimodal: score matching, DDPM, DDIM, CLIP | **DDPM vs DDIM ablation** |
 | 11 | RL + agents: Bellman, policy gradient, PPO, tool-use agents | **PPO on custom env + from-scratch agent** |
 | 12 | Applied tracks (physics / quant) + **capstone delivery** | **PINN or stat-arb capstone** + paper reproduction |
+| 13 *(optional)* | LLMs as a development surface: agentic coding, MCP, LLM-as-judge, cost modelling | **LLM judge + cost model + MCP server** |
 
 See [`SYLLABUS.md`](SYLLABUS.md) for the detailed week-by-week breakdown and reading list.
 
@@ -144,6 +145,7 @@ make week-9       # LLMs/DPO  -> installs 'dl,llm,ops'
 make week-10      # diffusion -> installs 'dl,diffusion,ops'
 make week-11      # RL        -> installs 'dl,rl,ops'
 make week-12      # capstone  -> installs 'dl,sciml,ops'
+make week-13      # dev surface -> installs 'devsurface,ops' (MCP SDK)
 ```
 
 Or install everything at once:

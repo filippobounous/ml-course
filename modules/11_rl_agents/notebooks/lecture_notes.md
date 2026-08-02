@@ -115,11 +115,11 @@ agent with a deterministic eval harness.
 
 | Block | Hours | Focus |
 |---|---|---|
-| §1 MDP + Bellman | 3 | Prove $\gamma$-contraction; run value iteration on a 5-state chain to convergence. |
-| §2 Policy gradient | 3 | Log-derivative trick; REINFORCE → actor–critic; the control-variate identity. |
-| §3 PPO | 4 | Clip geometry; "37 details" subset (obs/adv normalisation, LR anneal, value clip); CartPole. |
-| §4 GAE | 2 | Derive the $A_t = \delta_t + \gamma \lambda A_{t+1}$ recursion; bias–variance interpolation. |
-| §5 Custom env + PPO portfolio | 4 | Ship `portfolio/11_rl_agent/market_env.py` + `ppo.py`; training curves. |
+| §1–§2 MDP + Bellman | 3 | Prove $\gamma$-contraction; run value iteration on a 5-state chain to convergence. |
+| §3–§4 Policy gradient | 3 | Log-derivative trick; REINFORCE → actor–critic; the control-variate identity. |
+| §5 PPO | 4 | Clip geometry; "37 details" subset (obs/adv normalisation, LR anneal, value clip); CartPole. |
+| §5 GAE | 2 | Derive the $A_t = \delta_t + \gamma \lambda A_{t+1}$ recursion; bias–variance interpolation. |
+| Custom env + PPO portfolio | 4 | Ship `portfolio/11_rl_agent/market_env.py` + `ppo.py`; training curves. |
 | §6 ReAct agents | 3 | Tool-use loop; deterministic eval harness on 20 curated tasks. |
 | Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
 

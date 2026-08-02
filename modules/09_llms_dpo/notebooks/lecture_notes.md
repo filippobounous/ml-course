@@ -115,12 +115,12 @@ TinyLlama-1.1B-Chat via TRL or MLX + eval harness + model card + Gradio demo.
 
 | Block | Hours | Focus |
 |---|---|---|
-| §1 RLHF + DPO | 4 | Derive DPO from the RL objective; trace the $\log Z(x)$ cancellation. |
-| §2 LoRA + PEFT | 3 | Parameter-count derivation; ablate $r \in \{4, 8, 16, 32\}$ on a toy task. |
-| §3 Scaling laws | 2 | Kaplan vs Chinchilla; compute-vs-loss exponents on a TinyLlama-scale sweep. |
-| §4 MLX vs TRL pipelines | 3 | Run the same SFT/DPO recipe both ways; profile throughput. |
+| §1 Scaling laws | 2 | Kaplan vs Chinchilla; compute-vs-loss exponents on a TinyLlama-scale sweep. |
+| §2–§3 SFT + LoRA/PEFT | 3 | Parameter-count derivation; ablate $r \in \{4, 8, 16, 32\}$ on a toy task. |
+| §3 MLX vs TRL pipelines | 3 | Run the same SFT/DPO recipe both ways; profile throughput. |
+| §4 RLHF + DPO | 4 | Derive DPO from the RL objective; trace the $\log Z(x)$ cancellation. |
 | §5 Eval harness | 3 | Curate 20–30 prompts; LLM-as-judge with explicit ordinal-only caveat. |
-| Portfolio + Gradio + model card | 4 | Ship `portfolio/09_dpo_tinyllama/` + a Space (guarded by `HF_LOGIN=1`). |
+| §6 Portfolio + Gradio + model card | 4 | Ship `portfolio/09_dpo_tinyllama/` + a Space (guarded by `HF_LOGIN=1`). |
 | Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
 
 ## Self-assessment rubric

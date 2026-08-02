@@ -89,6 +89,12 @@ sciml = [
   "arch>=7.0",
 ]
 
+# LLMs as a development surface (W13) — MCP server SDK. The LLM-judge wrapper
+# and cost model are deliberately transport-free and need nothing extra.
+devsurface = [
+  "mcp>=1.0",
+]
+
 # Experiment ops (reproducibility, tracking, config) — introduced W6
 ops = [
   "hydra-core>=1.3",
@@ -101,7 +107,7 @@ ops = [
 
 # Convenience: everything (only attempt after you know the above groups install cleanly)
 all = [
-  "mlcourse[dev,dl,llm,diffusion,rl,sciml,ops]",
+  "mlcourse[dev,dl,llm,diffusion,rl,sciml,devsurface,ops]",
 ]
 
 [tool.hatch.build.targets.wheel]

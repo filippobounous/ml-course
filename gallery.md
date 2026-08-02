@@ -156,7 +156,7 @@ Sorted by week.
 2. **Per-artifact README** answers: problem, method, results,
    what I'd do with more compute, what I learned.
 3. **Reproducibility** — every artifact has a one-command path
-   (`make reproduce` or `python demo.py`).
+   (`make reproduce-N`, where N is the artifact number).
 
 Reading order matches the course flow: see [`STUDY_GUIDE.md`](STUDY_GUIDE.md)
 for the recommended week-by-week trajectory.

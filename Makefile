@@ -3,6 +3,8 @@
         week-1 week-2 week-3 week-4 week-5 week-6 week-7 week-8 week-9 week-10 week-11 week-12 week-13 \
         test-week-1 test-week-2 test-week-3 test-week-4 test-week-5 test-week-6 \
         test-week-7 test-week-8 test-week-9 test-week-10 test-week-11 test-week-12 test-week-13 \
+        reproduce-2 reproduce-3 reproduce-4 reproduce-5 reproduce-6 reproduce-7 \
+        reproduce-8 reproduce-9 reproduce-10 reproduce-11 reproduce-12 reproduce-13 \
         fetch-data portfolio-build clean \
         docker-dev docker-dev-shell docker-dev-test
 
@@ -16,8 +18,13 @@ help:
 	@echo "  smoke             quick import + env check"
 	@echo ""
 	@echo "Weekly targets (installs the right dep groups and points you at the module):"
-	@echo "  week-N            N in 1..12"
+	@echo "  week-N            N in 1..13"
 	@echo "  test-week-N       pytest just week N"
+	@echo ""
+	@echo "Portfolio artifacts:"
+	@echo "  reproduce-N       run artifact N's documented reproduction command (N in 2..13)"
+	@echo "                    runtimes vary from seconds to hours — see the honesty"
+	@echo "                    table in README.md before starting a long one"
 	@echo ""
 	@echo "Utilities:"
 	@echo "  fetch-data        download datasets referenced by the curriculum"
@@ -112,6 +119,10 @@ week-12: install-dev
 	python -m pip install -e ".[dl,sciml,ops]"
 	@echo "Week 12: Applied tracks & capstone. See modules/12_applied_capstone/README.md"
 
+week-13: install-dev
+	python -m pip install -e ".[devsurface,ops]"
+	@echo "Week 13: LLMs as a development surface. See modules/13_llms_dev_surface/README.md"
+
 # --- Per-week problem-set test targets -----------------------------------------
 test-week-1:
 	pytest tests/week_01
@@ -148,6 +159,55 @@ test-week-11:
 
 test-week-12:
 	pytest tests/week_12
+
+test-week-13:
+	pytest tests/week_13
+
+# --- Portfolio reproduction ----------------------------------------------------
+# One target per artifact, running the command documented under that artifact's
+# README "Reproduce" heading. Most are seconds-to-minutes; W7/W8/W9/W10/W11 train
+# real models. W8 and W9 need a corpus download / HF auth for the full run, so
+# those targets run the documented smoke path and print the full command.
+
+reproduce-2:
+	python portfolio/02_numpy_linreg/demo.py
+
+reproduce-3:
+	python portfolio/03_tabular_benchmark/benchmark.py
+
+reproduce-4:
+	python portfolio/04_pca_statarb/demo.py
+
+reproduce-5:
+	python portfolio/05_micrograd/demo.py
+
+reproduce-6:
+	python portfolio/06_trainer/demo.py
+
+reproduce-7:
+	python portfolio/07_vision_classifier/demo.py
+
+reproduce-8:
+	@echo ">> Smoke config. Full run needs a TinyStories corpus — see portfolio/08_tinygpt/README.md"
+	python portfolio/08_tinygpt/train.py --max-iters 200 --n-layer 2 --d-model 128
+
+reproduce-9:
+	@echo ">> Smoke config. Full run is ~2-4 h on MPS — see portfolio/09_dpo_tinyllama/README.md"
+	python portfolio/09_dpo_tinyllama/dpo_train.py --quick
+
+reproduce-10:
+	python portfolio/10_ddpm/train.py
+	python portfolio/10_ddpm/ablate.py
+
+reproduce-11:
+	python portfolio/11_rl_agent/train_ppo.py
+
+reproduce-12:
+	@echo ">> Track B (offline, seconds). Track A: python portfolio/12_capstone/demo_pinn.py"
+	python portfolio/12_capstone/demo_statarb.py
+
+reproduce-13:
+	python portfolio/13_dev_surface/demo.py
 
 # --- Utilities -----------------------------------------------------------------
 fetch-data:

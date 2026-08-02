@@ -71,11 +71,10 @@ for module_dir, week in WEEKS:
         f"modules/{week}/lecture_notes.md",
     )
     _add(f"modules/{module_dir}/problems/README.md", f"modules/{week}/problems.md")
-    if week not in ("13",):  # W13 has no solutions_theory yet.
-        _add(
-            f"modules/{module_dir}/problems/solutions_theory.md",
-            f"modules/{week}/solutions_theory.md",
-        )
+    _add(
+        f"modules/{module_dir}/problems/solutions_theory.md",
+        f"modules/{week}/solutions_theory.md",
+    )
     # Worked examples only exist for W1–W12 (W13 doesn't have them).
     if week != "13":
         _add(

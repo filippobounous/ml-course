@@ -100,11 +100,11 @@ Work the problem set in `../problems/README.md`. Implement manual 2-D convolutio
 
 | Block | Hours | Focus |
 |---|---|---|
-| §1–2 Conv + arithmetic | 4 | im2col, padding/stride; derive backward pass; verify against torch on a tiny example. |
-| §3–4 ResNet + BN | 4 | Skip connections, bottleneck; BN math; the train/eval dual behaviour. |
-| §5 Transfer learning | 3 | Pretrained ImageNet backbone → frozen vs fine-tuned; the normalisation-constant footgun. |
-| §6 Grad-CAM | 2 | Implement on the last block of your trained ResNet-18; eyeball 8 correct + 8 incorrect predictions. |
-| §7 FGSM | 1 | Sweep $\varepsilon$ in $\{0, 1/255, 2/255, 4/255, 8/255\}$ and plot accuracy. |
+| §1–§3 Conv + arithmetic + backward | 4 | im2col, padding/stride; derive backward pass; verify against torch on a tiny example. |
+| §4–§5 BN + ResNet | 4 | Skip connections, bottleneck; BN math; the train/eval dual behaviour. |
+| §6 Transfer learning | 3 | Pretrained ImageNet backbone → frozen vs fine-tuned; the normalisation-constant footgun. |
+| §7 Grad-CAM | 2 | Implement on the last block of your trained ResNet-18; eyeball 8 correct + 8 incorrect predictions. |
+| §8–§9 FGSM + ViT preview | 1 | Sweep $\varepsilon$ in $\{0, 1/255, 2/255, 4/255, 8/255\}$ and plot accuracy; skim the ViT patch-embedding idea. |
 | Problem set + portfolio | 5 | ResNet-18 from scratch on CIFAR-10 via `mlcourse.Trainer`; ship the failure-mode analysis. |
 | Office hours / review | 1 | Cross-check against `problems/solutions_theory.md`. |
 

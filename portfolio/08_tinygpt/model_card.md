@@ -7,7 +7,9 @@ Following Mitchell et al. 2019. See the
 
 - **Name.** Tiny GPT on TinyStories.
 - **Architecture.** Decoder-only transformer, ~10 M parameters.
-  Pre-LN + GELU + RoPE + weight-tied embedding/head.
+  Pre-LN + GELU + learned positional embeddings + weight-tied
+  embedding/head. (RoPE is derived and unit-tested in the Week-8
+  problem set; swapping it into this model is the stretch exercise.)
 - **Framework.** PyTorch from scratch (the point of W8 is the from-
   scratch implementation, not `transformers`).
 - **Hyperparameters.** AdamW $\beta_1{=}0.9, \beta_2{=}0.95$, weight
@@ -17,7 +19,7 @@ Following Mitchell et al. 2019. See the
 
 - **Primary.** Demonstrate end-to-end transformer engineering: BPE
   tokenizer training, multi-head attention from scratch, causal
-  masking, RoPE, training loop, sampling.
+  masking, training loop, sampling.
 - **Out-of-scope.** Generating realistic English text for any
   purpose. This is a small model on a stylistically narrow dataset
   (TinyStories — 4-year-old-reading-level fiction); its outputs are
