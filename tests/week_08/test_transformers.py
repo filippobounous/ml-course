@@ -9,13 +9,6 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-SOLUTIONS_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "modules"
-    / "08_transformers"
-    / "problems"
-    / "solutions.py"
-)
 MODEL_PATH = Path(__file__).resolve().parents[2] / "portfolio" / "08_tinygpt" / "model.py"
 
 
@@ -29,8 +22,8 @@ def _load(path: Path, name: str):
 
 
 @pytest.fixture(scope="module")
-def sols():
-    return _load(SOLUTIONS_PATH, "w8_solutions")
+def sols(load_problems):
+    return load_problems("08_transformers", "w8_solutions")
 
 
 def test_softmax_row_sums_to_one(sols):

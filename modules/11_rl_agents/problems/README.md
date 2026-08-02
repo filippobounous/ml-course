@@ -19,3 +19,5 @@
 ## Grading
 
 Tests in `tests/week_11/` check: Bellman update on a tiny tabular MDP matches the closed form; PPO loss with zero advantage is zero; the agent harness reports the right schema.
+
+Write your implementations in `starter.py` — that is the file the tests import. On a fresh clone every function there raises `NotImplementedError`, so the week starts red by design. Reference answers: `_reference/solutions.py` (code) and [`solutions_theory.md`](solutions_theory.md) (proofs); check them against your own attempt, and run `MLCOURSE_SOLUTIONS=reference pytest tests/week_11` if you need to tell your bug apart from the course's.

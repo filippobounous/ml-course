@@ -19,3 +19,5 @@
 ## Grading
 
 Tests in `tests/week_09/` verify: the DPO loss implementation matches TRL's on a fixed batch; the eval harness returns the correct schema; the Gradio demo module imports without pulling in MPS-only deps.
+
+Write your implementations in `starter.py` — that is the file the tests import. On a fresh clone every function there raises `NotImplementedError`, so the week starts red by design. Reference answers: `_reference/solutions.py` (code) and [`solutions_theory.md`](solutions_theory.md) (proofs); check them against your own attempt, and run `MLCOURSE_SOLUTIONS=reference pytest tests/week_09` if you need to tell your bug apart from the course's.

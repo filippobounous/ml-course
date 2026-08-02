@@ -36,7 +36,12 @@ jobs:
         run: |
           mypy src
 
+      # CI grades the committed reference solutions. The default (`mine`) mode
+      # grades modules/NN_*/problems/starter.py, which ships unimplemented on
+      # purpose — see tests/conftest.py.
       - name: Tests (pytest + coverage)
+        env:
+          MLCOURSE_SOLUTIONS: reference
         run: |
           pytest --cov=src/mlcourse --cov-report=xml --cov-report=term
 
@@ -100,5 +105,7 @@ jobs:
           python -m pip install -e ".[dev,ops]"
 
       - name: Tests (pytest + --run-slow)
+        env:
+          MLCOURSE_SOLUTIONS: reference
         run: |
           pytest --run-slow -q

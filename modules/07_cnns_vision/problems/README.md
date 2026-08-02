@@ -19,3 +19,5 @@
 ## Grading
 
 Tests in `tests/week_07/` check that (a) the classifier hits a threshold accuracy on a held-out subset and (b) Grad-CAM outputs have the right spatial shape.
+
+Write your implementations in `starter.py` — that is the file the tests import. On a fresh clone every function there raises `NotImplementedError`, so the week starts red by design. Reference answers: `_reference/solutions.py` (code) and [`solutions_theory.md`](solutions_theory.md) (proofs); check them against your own attempt, and run `MLCOURSE_SOLUTIONS=reference pytest tests/week_07` if you need to tell your bug apart from the course's.

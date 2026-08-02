@@ -69,7 +69,7 @@ This is the core of Avellaneda & Lee (2008), with many variants: OU-calibrated h
 
 ## What to do with these notes
 
-Work the problem set in `../problems/README.md`. Implement GMM-EM in NumPy (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/04_pca_statarb/` — a walk-forward PCA stat-arb backtest on simulated returns (and optionally Ken French industry data when offline).
+Work the problem set in `../problems/README.md`. Implement GMM-EM in NumPy in `../problems/starter.py` (reference in `../problems/_reference/solutions.py`). Build the portfolio artifact in `../../../portfolio/04_pca_statarb/` — a walk-forward PCA stat-arb backtest on simulated returns (and optionally Ken French industry data when offline).
 
 **Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three numerical exercises (PCA on a 4-sample toy, k-means on 6 points by hand, one full GMM-EM iteration on a 4-point dataset).
 

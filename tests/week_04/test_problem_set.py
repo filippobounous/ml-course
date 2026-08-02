@@ -9,13 +9,6 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-SOLUTIONS_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "modules"
-    / "04_classical_unsupervised"
-    / "problems"
-    / "solutions.py"
-)
 STATARB_PATH = (
     Path(__file__).resolve().parents[2] / "portfolio" / "04_pca_statarb" / "pca_statarb.py"
 )
@@ -31,8 +24,8 @@ def _load(path: Path, name: str):
 
 
 @pytest.fixture(scope="module")
-def sols():
-    return _load(SOLUTIONS_PATH, "w4_solutions")
+def sols(load_problems):
+    return load_problems("04_classical_unsupervised", "w4_solutions")
 
 
 @pytest.fixture(scope="module")

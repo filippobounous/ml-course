@@ -90,7 +90,7 @@ ViT cuts an image into 16×16 patches, embeds each patch, adds positional encodi
 
 ## What to do with these notes
 
-Work the problem set in `../problems/README.md`. Implement manual 2-D convolution in NumPy (reference in `../problems/solutions.py`). Build the portfolio artifact in `../../../portfolio/07_vision_classifier/`: CIFAR-10 ResNet-18 + transfer-learning baseline + Grad-CAM + FGSM.
+Work the problem set in `../problems/README.md`. Implement manual 2-D convolution in NumPy in `../problems/starter.py` (reference in `../problems/_reference/solutions.py`). Build the portfolio artifact in `../../../portfolio/07_vision_classifier/`: CIFAR-10 ResNet-18 + transfer-learning baseline + Grad-CAM + FGSM.
 
 **Before the problem set**, walk through [`worked_examples.md`](worked_examples.md) — three paper-doable exercises (conv backprop showing $\partial L / \partial W$ is itself a conv, receptive-field recursion on a 4-layer CNN, Grad-CAM on a synthetic 2-channel feature map).
 

@@ -2,37 +2,13 @@
 
 from __future__ import annotations
 
-import importlib.util
-from pathlib import Path
-
 import numpy as np
 import pytest
 
-MODULE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "modules"
-    / "01_math_foundations"
-    / "problems"
-    / "solutions.py"
-)
-
-
-def _load_solutions():
-    import sys
-
-    spec = importlib.util.spec_from_file_location("w1_solutions", MODULE_PATH)
-    assert spec and spec.loader, f"Could not load {MODULE_PATH}"
-    module = importlib.util.module_from_spec(spec)
-    # Register in sys.modules so @dataclass with `from __future__ import annotations`
-    # can resolve forward references via typing.get_type_hints.
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
 
 @pytest.fixture(scope="module")
-def sols():
-    return _load_solutions()
+def sols(load_problems):
+    return load_problems("01_math_foundations", "w1_solutions")
 
 
 def test_pseudoinverse_matches_numpy(sols):

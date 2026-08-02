@@ -81,7 +81,10 @@ Each week follows the same shape:
 
 1. **Readings + lecture notes** (in `modules/NN_*/README.md` and `readings.md`)
 2. **Problem set**: 2 theory (proofs/derivations) + 2 implementation + 1–2 applied.
-   Graded where possible via `pytest` (see `tests/week_NN/`).
+   You implement in `modules/NN_*/problems/starter.py`; `pytest tests/week_NN/`
+   grades that file, so a fresh clone starts **red** on purpose. Reference
+   answers sit in `problems/_reference/solutions.py` — or run the suite against
+   them with `make test-reference`. See [`STUDY_GUIDE.md`](STUDY_GUIDE.md).
 3. **Portfolio artifact** (in `portfolio/NN_*/`) — the shareable piece.
 
 ## Setup

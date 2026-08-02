@@ -25,3 +25,5 @@ Pick the subset matching your capstone track.
 ## Grading
 
 Tests in `tests/week_12/` check: (Track A) PDE residual decreases monotonically over training on a toy problem; (Track B) walk-forward split has no temporal leakage; (both) the paper-reproduction directory contains `PLAN.md` + a results notebook.
+
+Write your implementations in `starter.py` — that is the file the tests import. On a fresh clone every function there raises `NotImplementedError`, so the week starts red by design. Reference answers: `_reference/solutions.py` (code) and [`solutions_theory.md`](solutions_theory.md) (proofs); check them against your own attempt, and run `MLCOURSE_SOLUTIONS=reference pytest tests/week_12` if you need to tell your bug apart from the course's.

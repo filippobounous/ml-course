@@ -20,3 +20,5 @@
 ## Grading
 
 Tests in `tests/week_08/` check: BPE round-trip (`decode(encode(x)) == x`); multi-head vs fused-sdpa numerical equivalence; causal mask application.
+
+Write your implementations in `starter.py` — that is the file the tests import. On a fresh clone every function there raises `NotImplementedError`, so the week starts red by design. Reference answers: `_reference/solutions.py` (code) and [`solutions_theory.md`](solutions_theory.md) (proofs); check them against your own attempt, and run `MLCOURSE_SOLUTIONS=reference pytest tests/week_08` if you need to tell your bug apart from the course's.

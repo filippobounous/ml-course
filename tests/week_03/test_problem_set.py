@@ -2,34 +2,13 @@
 
 from __future__ import annotations
 
-import importlib.util
-import sys
-from pathlib import Path
-
 import numpy as np
 import pytest
 
-MODULE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "modules"
-    / "03_classical_supervised"
-    / "problems"
-    / "solutions.py"
-)
-
-
-def _load():
-    spec = importlib.util.spec_from_file_location("w3_solutions", MODULE_PATH)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
 
 @pytest.fixture(scope="module")
-def sols():
-    return _load()
+def sols(load_problems):
+    return load_problems("03_classical_supervised", "w3_solutions")
 
 
 def _make_logistic_problem(n=500, p=5, seed=0):

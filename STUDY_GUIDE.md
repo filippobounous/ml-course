@@ -27,8 +27,11 @@ Each week follows the same shape (see `modules/NN_*/`):
 1. **Readings + lecture notes** (`modules/NN_*/notebooks/lecture_notes.md`
    + `modules/NN_*/readings.md`) — ~4 hr.
 2. **Problem set** (`modules/NN_*/problems/README.md`) — 2 theory +
-   2 implementation + 1–2 applied — ~8 hr. Solutions are in
-   `solutions.py` (code) and `solutions_theory.md` (proofs).
+   2 implementation + 1–2 applied — ~8 hr. You write the code in
+   `problems/starter.py`; that is the file `pytest tests/week_NN` grades.
+   Reference answers live in `problems/_reference/solutions.py` (code)
+   and `problems/solutions_theory.md` (proofs) — read them after your
+   own attempt.
 3. **Portfolio artifact** (`portfolio/NN_*/`) — the shareable piece —
    ~6 hr. Each artifact has a `README.md` (what it is) and a single
    reproduction command, `make reproduce-N`. The underlying entry point
@@ -65,9 +68,36 @@ doing the full week.
 
 ## How to check yourself
 
+**The tests grade you, not the repo.** On a fresh clone
+`pytest tests/week_01` is **red**: every function in
+`modules/01_math_foundations/problems/starter.py` raises
+`NotImplementedError` until you write it. That is the starting state, not
+a broken install — a green test is a signal you earned.
+
+If you need to tell "my code is wrong" apart from "the course is wrong",
+run the same tests against the committed reference:
+
+```bash
+pytest tests/week_01                               # grades your starter.py
+MLCOURSE_SOLUTIONS=reference pytest tests/week_01  # grades the reference
+make test-reference                                # whole suite, reference mode
+```
+
+Reference mode is what CI runs, so it should always be green. If it isn't,
+that's a bug in the course — please file it.
+
+**Where this currently stops.** The starter/reference split covers the
+problem-set code for W1, W3, W4, W7, W8, W9, W10, W11 and W12. The
+**portfolio artifacts under `portfolio/` are still shipped fully
+implemented**, as are the W5 autograd engine and W6 `Trainer` in
+`src/mlcourse/` — so their tests pass without you writing anything. Treat
+that code as worked examples to read and rebuild, not as your artifact:
+the honest move is to write your own version in a scratch file and diff.
+Closing that gap is tracked in [`TODO.md`](TODO.md).
+
 Three feedback loops, in increasing order of strength:
 
-1. `pytest tests/week_NN/` should pass after you finish the problem set.
+1. `pytest tests/week_NN/` passes once you've finished the problem set.
 2. `pytest --run-slow tests/week_NN/` runs the integration tier (actually
    trains a small model) for weeks that have one — best smoke check that
    your environment is healthy.

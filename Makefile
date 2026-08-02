@@ -1,4 +1,4 @@
-.PHONY: help install-dev install-all install-docs format lint test test-slow smoke \
+.PHONY: help install-dev install-all install-docs format lint test test-reference test-slow smoke \
         docs docs-serve \
         week-1 week-2 week-3 week-4 week-5 week-6 week-7 week-8 week-9 week-10 week-11 week-12 week-13 \
         test-week-1 test-week-2 test-week-3 test-week-4 test-week-5 test-week-6 \
@@ -14,7 +14,8 @@ help:
 	@echo "  install-all       install every optional-dependency group"
 	@echo "  format            ruff format + fix"
 	@echo "  lint              ruff + mypy"
-	@echo "  test              pytest (all)"
+	@echo "  test              pytest (grades YOUR modules/NN_*/problems/starter.py)"
+	@echo "  test-reference    pytest against the committed reference solutions"
 	@echo "  smoke             quick import + env check"
 	@echo ""
 	@echo "Weekly targets (installs the right dep groups and points you at the module):"
@@ -64,8 +65,13 @@ lint:
 test:
 	pytest
 
+# Grade the committed reference solutions instead of your starter.py files.
+# Use this to confirm a red test is your bug and not the course's.
+test-reference:
+	MLCOURSE_SOLUTIONS=reference pytest
+
 test-slow:
-	pytest --run-slow -q
+	MLCOURSE_SOLUTIONS=reference pytest --run-slow -q
 
 smoke:
 	python -c "import mlcourse; print('mlcourse', mlcourse.__version__ if hasattr(mlcourse,'__version__') else 'ok')"

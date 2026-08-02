@@ -10,9 +10,6 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-SOLUTIONS_PATH = (
-    Path(__file__).resolve().parents[2] / "modules" / "09_llms_dpo" / "problems" / "solutions.py"
-)
 EVAL_PATH = (
     Path(__file__).resolve().parents[2] / "portfolio" / "09_dpo_tinyllama" / "eval_harness.py"
 )
@@ -28,8 +25,8 @@ def _load(path: Path, name: str):
 
 
 @pytest.fixture(scope="module")
-def sols():
-    return _load(SOLUTIONS_PATH, "w9_solutions")
+def sols(load_problems):
+    return load_problems("09_llms_dpo", "w9_solutions")
 
 
 @pytest.fixture(scope="module")
